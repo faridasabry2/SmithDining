@@ -4,7 +4,7 @@ let houses;
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
 // using response.json(), run the initialize() function
-fetch('houses.json').then(function(response) {
+fetch('menus.json').then(function(response) {
   if(response.ok) {
     response.json().then(function(json) {
       houses = json;
@@ -196,7 +196,7 @@ function initialize() {
    // to finally display it
    function fetchBlob(house) {
      // construct the URL path to the image file from the product.image property
-     let url = 'images/' + house.image;
+     let url = 'images/' + "tyler.jpg";
      // Use fetch to fetch the image, and convert the resulting response to a blob
      // Again, if any errors occur we report them in the console.
      fetch(url).then(function(response) {
@@ -206,7 +206,7 @@ function initialize() {
            // that points to an object stored inside the browser
            objectURL = URL.createObjectURL(blob);
            // invoke showHouse
-           showHouse(objectURL, house);
+           showHouse(house);
          });
        } else {
          console.log('Network request for "' + house.name + '" image failed with response ' + response.status + ': ' + response.statusText);
@@ -216,7 +216,7 @@ function initialize() {
 
    // display a house in a sinlge column
    // includes image, house name, area of campus, year built, and capacity
-   function showHouse(objectURL, house) {
+   function showHouse(house) {
 
       // create new HTML elements that will be needed
       let section = document.createElement('section');
@@ -226,9 +226,11 @@ function initialize() {
       let capacity = document.createElement('p');
       let year_built = document.createElement('p');
 
+      heading.innerHTML=house.item_name;
+
       // give the <h4> textContent equal to the house "name" property
       // added link to floorplan here
-      heading.innerHTML = "<a href='"+house.floor_plan+"' target='_blank' class='houseName'>"+house.name+"</a>";
+      /*heading.innerHTML = "<a href='"+house.floor_plan+"' target='_blank' class='houseName'>"+house.name+"</a>";
 
       // set the src of the <img> element to the ObjectURL, set
       // the alt to the house "name" property
@@ -243,7 +245,7 @@ function initialize() {
       year_built.innerHTML = '<span class="label">year built: </span>' +house.year_built;
 
       capacity.className = "cap";
-      capacity.innerHTML = '<span class="label">capacity: </span>'+house.capacity;
+      capacity.innerHTML = '<span class="label">capacity: </span>'+house.capacity;*/
 
       //append the elements to the DOM so the house displays
       index = (index + 1)%3
