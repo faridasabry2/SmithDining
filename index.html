@@ -1,0 +1,71 @@
+<DOCTYPE html>
+<html>
+<head>
+   <title> Smith College Housing Search</title>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+   <link href="houses.css" rel="stylesheet">
+</head>
+<body>
+   <div class="container">
+      <div class="row">
+         <h2 class="header">Smith College Housing Search</h2>
+      </div>
+      <div class="row">
+         <div class="col-md-4">
+            <form>
+              <br />
+              <div>
+                 <label for="accessible">Accessible:</label>
+                 <select id="accessible">
+                   <option selected>All</option>
+                   <option>Yes</option>
+                   <option>No</option>
+                </select>
+              </div>
+              <div>
+                 <label for="elevator">Elevator:</label>
+                 <select id="elevator">
+                   <option selected>All</option>
+                   <option>Yes</option>
+                   <option>No</option>
+                </select>
+              </div>
+              <div>
+                 <label for="numStudents">Number of students in the house:</label>
+                 <select id="numStudents">
+                   <option selected>All</option>
+                   <option>0-20</option>
+                   <option>20-40</option>
+                   <option>40-60</option>
+                   <option>60-80</option>
+                   <option>over 80</option>
+                </select>
+              </div>
+              <div id="area">
+                 <label for="area">Area of Campus: </label><br />
+                 <input type="checkbox" name="area" value="Green Street" checked="true" /> Green Street<br />
+                 <input type="checkbox" name="area" value="Upper Elm Street" checked="true" /> Upper Elm Street<br />
+                 <input type="checkbox" name="area" value="Lower Elm Street" checked="true" /> Lower Elm Street<br />
+                 <input type="checkbox" name="area" value="Center Campus" checked="true" /> Center Campus<br />
+                 <input type="checkbox" name="area" value="East Quad" checked="true" /> East Quad<br />
+                 <input type="checkbox" name="area" value="West Quad" checked="true" /> West Quad<br />
+              </div>
+              <br />
+              <div>
+                <button>Filter results</button>
+              </div>
+            </form>
+
+         </div>
+            <div class="col-sm" id="one">
+            </div>
+            <div class="col-sm" id="two">
+            </div>
+            <div class="col-sm" id="three">
+            </div>
+      </div>
+   </div>
+   <script src="houses.js"></script>
+</body>
+</html>

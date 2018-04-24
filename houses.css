@@ -1,0 +1,47 @@
+/* General */
+
+body {
+   font-family: 'Open Sans', sans-serif;
+}
+
+select {
+   float:right;
+}
+
+button {
+   background-color:#BDBDBD;
+   border-radius: 5px;
+   color: #212121;
+}
+button:hover {
+   background-color:#9E9E9E;
+   color: black;
+}
+img {
+   max-width: 100%;
+   max-heigh: 100%;
+   padding: .2em;
+   border: .1em solid #9E9E9E;
+}
+section {
+   margin-bottom: 10%;
+}
+p {
+   margin: 0;
+}
+.label {
+   font-style: italic;
+}
+.houseName {
+   text-decoration: underline;
+   font-size:1.7em;
+   color: black;
+}
+.houseName:hover {
+   color: black;
+}
+
+.header {
+   padding-top: 2%;
+   padding-bottom: 2%;
+}
