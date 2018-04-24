@@ -1,5 +1,7 @@
-// this will hold the json of houses
-let houses;
+// this will hold the json of menus
+let menus;
+// list of dining halls
+let dining_halls = ["CHAPIN", "CHASE/DUCKETT", "CUSHING/EMERSON", "CUTTER/ZISKIND", "HUBBARD", "KING/SCALES", "LAMONT", "WILSON", "NORTHROP/GILLETT", "TYLER"];
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -7,30 +9,17 @@ let houses;
 fetch('menus.json').then(function(response) {
   if(response.ok) {
     response.json().then(function(json) {
-      houses = json;
+      menus = json;
       initialize();
     });
   } else {
-    console.log('Network request for houses.json failed with response ' + response.status + ': ' + response.statusText);
+    console.log('Network request for menus.json failed with response ' + response.status + ': ' + response.statusText);
   }
 });
 
-// function sets up the initial page and deals with each input
+/* function sets up the initial page */
 function initialize() {
 
-   // get the UI elements we need to manipulate
-   let accessible = document.querySelector('#accessible');
-   let numStudents = document.querySelector('#numStudents');
-   let elevator = document.querySelector('#elevator');
-   let areaDiv = document.querySelector('#area');
-   // creating an array to store all checkboxes
-   let areaBoxes = [];
-   for(let i=0; i<areaDiv.children.length; i++) {
-      if(areaDiv.children[i].nodeName === "INPUT") {
-         areaBoxes.push(areaDiv.children[i]);
-      }
-   }
-   let filterButton = document.querySelector('button');
    // create array to hold columns for results
    let c1 = document.querySelector('#one');
    let c2 = document.querySelector('#two');
@@ -38,117 +27,81 @@ function initialize() {
    let columns = [c1, c2, c3];
    let index = 0;
 
-   // these contain the results of filtering by category
-   // finalGroup represents the combination of the other four
-   let accessibleGroup;
-   let numStudentsGroup;
-   let areaGroup;
-   let elevatorGroup;
+   // --------------------------------------------------------------
+   // DEFAULT: display the menu items for that day
    let finalGroup;
+   finalGroup = filterByDate(new Date());
+   console.log(finalGroup);
 
-   // on first load, show all houses
-   finalGroup = houses;
-   updateDisplay();
+   // --------------------------------------------------------------
+   console.log(menus[0].dining_hall === dining_halls[0]);
 
-   // set all equal to an empty array
-   accessibleGroup = [];
-   numStudentsGroup = [];
-   areaGroup = [];
-   elevatorGroup = [];
-   finalGroup = [];
+   // sort by: entrees, condiments, desserts
+   for (d in dining_halls) {
+      console.log(d);
+      group = finalGroup.filter(function(entry) {
+         return entry.dining_hall === dining_halls[d] && entry.meal_type === "DINNER";
+      });
+      console.log(group);
+   }
+   // chapin = finalGroup.filter(function (entry) {
+   //    return entry.dining_hall === dining_halls[0] && entry.meal_type === "DINNER";
+   // });
+   // console.log(chapin);
+   
+   // updateDisplay();
+}
 
-   //when the search button is clicked, invoke filterResults
-   filterButton.onclick = filterResults;
-
-   // this function filters the houses based on the input buttons
-   function filterResults(e) {
-      // use preventDefault to stop form from submitting
-      e.preventDefault();
-
-      // set back to empty arrays to clear previous search
-      accessibleGroup = [];
-      numStudentsGroup = [];
-      areaGroup = [];
-      elevatorGroup = [];
-      finalGroup = [];
-      index = 0;
-
-      // filter by accessiblity
-      if (accessible.value === 'All') {
-         accessibleGroup = houses;
-      } else {
-         // iterate over all houses and select those in the correct area of
-         // campus, first case matching to json values
-         let lowerCaseAccessible = accessible.value.toLowerCase();
-         for(let i=0; i<houses.length; i++) {
-            if (houses[i].accessible === lowerCaseAccessible) {
-               accessibleGroup.push(houses[i]);
-            }
+   /* 
+   function to filter menu items by date. 
+   Can take a single date or two dates.
+   If two dates are given, it will get all the menu items between those dates (inclusive).
+   Returns the list of all date-correct menu items.
+   */
+   function filterByDate(queryDates) {
+      let results;
+      // user could pass a single date, or list of dates
+      if (arguments.length === 1) {
+         // user passed in a single date
+         // filter menus on this specific date
+         results = menus.filter(function (entry) {
+            menuDate = new Date(entry.date);
+            return menuDate.toDateString() === queryDates.toDateString();
+         });
+      } 
+      // user passed multiple dates
+      else {
+         // get first and last dates
+         let firstDay = arguments[0].toDateString();
+         let lastDay = arguments[1].toDateString();
+         // temp variables to help while loop
+         let current = new Date(firstDay);
+         results = [];
+         // loop until current date = end date
+         while (current.toDateString() >= lastDay) {
+            // append that day's menu items to the list
+            results.push(
+               menus.filter(function (entry) {
+                  menuDate = new Date(entry.date);
+                  return menuDate.toDateString() === current.toDateString();
+               }));
+            // increment current
+            current.setDate(current.getDate() + 1);
          }
       }
-
-      //filter by number of students
-      if (numStudents.value === 'All') {
-         numStudentsGroup = houses;
-      } else {
-         let lower;
-         let upper;
-         if(numStudents.value === '0-20') {
-            lower = 0;
-            upper = 20;
-         } else if(numStudents.value === '20-40') {
-            lower = 20;
-            upper = 40;
-         } else if(numStudents.value === '40-60') {
-            lower = 40;
-            upper = 60;
-         } else if(numStudents.value === '60-80') {
-            lower = 60;
-            upper = 80;
-         } else {
-            lower = 80;
-            upper = 1000;
-         }
-         // select all houses that fit within the capacity limit specified
-         for(let i=0; i<houses.length; i++) {
-            if(houses[i].capacity <= upper && houses[i].capacity > lower) {
-               numStudentsGroup.push(houses[i]);
-            }
-         }
-      }
-
-      // filter by area
-      filterCheckboxes(areaBoxes, "area", areaGroup);
-
-      // filter by elevator
-      if (elevator.value === 'All') {
-         elevatorGroup = houses;
-      } else {
-         // iterate over all houses and select those in the correct area of
-         // campus, first case matching to json values
-         let lowerCaseElevator = elevator.value.toLowerCase();
-         for(let i=0; i<houses.length; i++) {
-            if (houses[i].elevator === lowerCaseElevator) {
-               elevatorGroup.push(houses[i]);
-            }
-         }
-      }
-
-      mergeGroups();
-      updateDisplay();
-
+      return results;
    }
 
    // this helper function takes in a list of checkboxes, the attribute they're
    // related to, and the group they connect to. The list of checkboxes is
    // iterated over, and boxes that are checked are filtered through the list
-   // of houses.
+   // of menus.
    function filterCheckboxes(boxes, attr, group) {
       for(let i=0; i<boxes.length; i++) {
          if(boxes[i].checked === true) {
-            for(let j=0; j<houses.length; j++) {
-               if(houses[j][attr] === boxes[i].value) {
-                  group.push(houses[j]);
+            for(let j=0; j<menus.length; j++) {
+               if(menus[j][attr] === boxes[i].value) {
+                  group.push(menus[j]);
                }
             }
          }
@@ -156,11 +109,11 @@ function initialize() {
    }
 
    // this function takes the four groups and merges them,
-   // putting only houses that qualify for all four categories
+   // putting only menus that qualify for all four categories
    // into the final group.
    function mergeGroups() {
-      for(let i=0; i<houses.length; i++) {
-         let currentHouse = houses[i];
+      for(let i=0; i<menus.length; i++) {
+         let currentHouse = menus[i];
          if(areaGroup.includes(currentHouse) &&
          accessibleGroup.includes(currentHouse) &&
          numStudentsGroup.includes(currentHouse) &&
@@ -170,7 +123,7 @@ function initialize() {
       }
    }
 
-   // updates display to only include houses from finalGroup
+   // updates display to only include menus from finalGroup
    function updateDisplay() {
       // remove the previous contents of the columns
       for(let i=0; i<columns.length; i++) {
@@ -179,7 +132,7 @@ function initialize() {
          }
       }
 
-      //if no houses match, display "no results to display" message
+      //if no menus match, display "no results to display" message
       if (finalGroup.length === 0) {
          let para = document.createElement('h5');
          para.textContent = 'No results to display.';
@@ -256,4 +209,3 @@ function initialize() {
       section.append(year_built);
       section.append(capacity);
    }
-}
