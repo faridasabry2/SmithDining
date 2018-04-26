@@ -232,7 +232,15 @@ function initialize() {
          items.append(single_item);
       }
 
-      index = (index + 1)%3
+      // index = (index + 1)%3
+      if (menu_items[0].meal_type === "BREAKFAST") {
+         index = 0;
+      } 
+      else if (menu_items[0].meal_type === "LUNCH") {
+         index = 1;
+      } else if (menu_items[0].meal_type === "DINNER") {
+         index = 2;
+      }
       columns[index].appendChild(section);
       // section.appendChild(image);
       section.append(heading);
