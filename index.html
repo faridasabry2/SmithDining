@@ -3,53 +3,52 @@
 <head>
    <title> Smith College Housing Search</title>
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <link rel="styleshet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
    <link href="houses.css" rel="stylesheet">
+
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <link rel="stylesheet" href="/resources/demos/style.css">
+   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 </head>
 <body>
    <div class="container">
       <div class="row">
-         <h2 class="header">Smith College Housing Search</h2>
+         <h2 class="header">Smith College Dining Search</h2>
       </div>
       <div class="row">
-         <div class="col-md-4">
+
+          <div class="col-md-4">
+            <!-- Calendar Date -->
+            <p>Date: <input type="text" id="datepicker"></p>
+
+
             <form>
               <br />
               <div>
-                 <label for="accessible">Accessible:</label>
-                 <select id="accessible">
-                   <option selected>All</option>
-                   <option>Yes</option>
-                   <option>No</option>
+                 <label for="diet">Dietary Restriction:</label>
+                 <select id="diet">
+                   <option selected>None</option>
+                   <option>Vegetarian</option>
+                   <option>Vegan</option>
+                   <option>Kosher</option>
+                   <option>Halal</option>
                 </select>
               </div>
-              <div>
-                 <label for="elevator">Elevator:</label>
-                 <select id="elevator">
-                   <option selected>All</option>
-                   <option>Yes</option>
-                   <option>No</option>
-                </select>
-              </div>
-              <div>
-                 <label for="numStudents">Number of students in the house:</label>
-                 <select id="numStudents">
-                   <option selected>All</option>
-                   <option>0-20</option>
-                   <option>20-40</option>
-                   <option>40-60</option>
-                   <option>60-80</option>
-                   <option>over 80</option>
-                </select>
-              </div>
-              <div id="area">
-                 <label for="area">Area of Campus: </label><br />
-                 <input type="checkbox" name="area" value="Green Street" checked="true" /> Green Street<br />
-                 <input type="checkbox" name="area" value="Upper Elm Street" checked="true" /> Upper Elm Street<br />
-                 <input type="checkbox" name="area" value="Lower Elm Street" checked="true" /> Lower Elm Street<br />
-                 <input type="checkbox" name="area" value="Center Campus" checked="true" /> Center Campus<br />
-                 <input type="checkbox" name="area" value="East Quad" checked="true" /> East Quad<br />
-                 <input type="checkbox" name="area" value="West Quad" checked="true" /> West Quad<br />
+
+              <div id="allergen">
+                <label for="allergen">Allergen: </label><br/>
+                <input type="checkbox" name="allergen" value="wheat"/> Wheat <br/>
+                <input type="checkbox" name="allergen" value="eggs"/> Eggs <br/>
+                <input type="checkbox" name="allergen" value="nuts"/> Nuts <br/>
+                <input type="checkbox" name="allergen" value="fish"/> Fish <br/>
+                <input type="checkbox" name="allergen" value="milk"/> Milk <br/>
+                <input type="checkbox" name="allergen" value="peanuts"/> Peanuts<br/>
+                <input type="checkbox" name="allergen" value="shelfish"/> Shelfish <br/>
+                <input type="checkbox" name="allergen" value="soy"/> Soy <br/>
+                <input type="checkbox" name="allergen" value="tree nuts"/> Tree Nuts <br/>
               </div>
               <br />
               <div>
@@ -66,6 +65,18 @@
             </div>
       </div>
    </div>
-   <script src="houses.js"></script>
+
+  <!-- Calendar Functionality -->
+  <script>
+    $( function() {
+      $( "#datepicker" ).datepicker({
+        dateFormat:"mm/dd/yy",
+        minDate: 0 
+      }).datepicker("setDate", new Date());
+    } );
+  </script>
+
+  <!-- Filtering -->
+  <script src="houses.js"></script>
 </body>
 </html>
