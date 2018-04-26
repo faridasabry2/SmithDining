@@ -1,14 +1,12 @@
 <DOCTYPE html>
 <html>
 <head>
-   <title> Smith College Housing Search</title>
+   <title> Smith College Dining Menu</title>
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
    <link rel="styleshet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-   <link href="houses.css" rel="stylesheet">
-
+   <link href="menus.css" rel="stylesheet">
    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-   <link rel="stylesheet" href="/resources/demos/style.css">
    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -16,17 +14,35 @@
 <body>
    <div class="container">
       <div class="row">
-         <h2 class="header">Smith College Dining Search</h2>
+         <h2 class="header">Smith College Dining Menu</h2>
       </div>
       <div class="row">
 
           <div class="col-md-4">
-            <!-- Calendar Date -->
-            <p>Date: <input type="text" id="datepicker"></p>
-
-
             <form>
-              <br />
+
+              <!-- Calendar Date -->
+              <p>Date: <input type="text" id="datepicker"></p>
+          
+              <hr>
+
+              <!-- Are of campus dropdown -->
+              <div>
+                <label for="area">Area of campus:</label>            
+                <select id="area">
+                  <option selected>All</option>
+                  <option>Green Street</option>
+                  <option>Center Campus</option>
+                  <option>East Quad</option>
+                  <option>West Quad</option>
+                  <option>Lower Elm Street</option>
+                  <option>Upper Elm Street</option>
+                </select>
+              </div>
+
+              <hr>
+
+              <!-- Dietary Restriction -->
               <div>
                  <label for="diet">Dietary Restriction:</label>
                  <select id="diet">
@@ -38,8 +54,11 @@
                 </select>
               </div>
 
+              <hr>
+
+              <!-- Allergies -->
               <div id="allergen">
-                <label for="allergen">Allergen: </label><br/>
+                <label for="allergen">Allergen </label><br/>
                 <input type="checkbox" name="allergen" value="wheat"/> Wheat <br/>
                 <input type="checkbox" name="allergen" value="eggs"/> Eggs <br/>
                 <input type="checkbox" name="allergen" value="nuts"/> Nuts <br/>
@@ -48,11 +67,21 @@
                 <input type="checkbox" name="allergen" value="peanuts"/> Peanuts<br/>
                 <input type="checkbox" name="allergen" value="shelfish"/> Shelfish <br/>
                 <input type="checkbox" name="allergen" value="soy"/> Soy <br/>
-                <input type="checkbox" name="allergen" value="tree nuts"/> Tree Nuts <br/>
+                <input type="checkbox" name="allergen" value="tree nuts"/> Tree Nuts
               </div>
-              <br />
+
+              <hr>
+
+              <!-- Search Box -->
               <div>
-                <button>Filter results</button>
+                <label for="searchTerm">Favorite Food Search:</label>
+                <br/>
+                <input type="text" id="searchTerm" placeholder="e.g. Brownies">
+              </div>
+              <br/><br/>
+
+              <div>
+                <button class="btn btn-primary">Filter results</button>
               </div>
             </form>
 
@@ -76,7 +105,7 @@
     } );
   </script>
 
-  <!-- Filtering -->
-  <script src="houses.js"></script>
+  <!-- Customer JS for menu showing/filtering -->
+  <script src="menus.js"></script>
 </body>
 </html>
