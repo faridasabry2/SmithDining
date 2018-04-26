@@ -10,6 +10,7 @@ let dining_halls = ["CHAPIN", "CHASE/DUCKETT", "CUSHING/EMERSON", "CUTTER/ZISKIN
 // list of all possible meals
 let meals = ["BREAKFAST", "LUNCH", "DINNER"]
 
+
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
 // using response.json(), run the initialize() function
@@ -36,14 +37,9 @@ function initialize() {
 
    // --------------------------------------------------------------
    // DEFAULT DATE: display the menu items for that day
+   // filter out parstock items
    let finalGroup;
-   finalGroup = filterByDate(new Date());
-
-   // --------------------------------------------------------------
-   // FILTERING WILL HAPPEN HERE
-
-   // FILTER OUT PARSTOCK ITEMS
-   finalGroup = finalGroup.filter(function(entry) {
+   finalGroup = filterByDate(new Date()).filter(function(entry) {
       return entry.course != "Parstock";
    });
 
@@ -71,9 +67,51 @@ function initialize() {
          }
       }
 
-   console.log(meals_list);
+   // console.log(meals_list);
    
    updateDisplay(meals_list);
+
+   // --------------------------------------------------------------
+   // FILTERING WILL HAPPEN HERE
+   let filterBtn = document.querySelector('button');
+   let date = document.getElementById('datepicker');
+   lastDate = date.value;
+
+   // SELECT DATE 
+   date.onchange = selectDate;
+   
+   /*
+   function triggered when date is changed on calendar
+   */
+   function selectDate(e) {
+      e.preventDefault();
+
+      filterGroup = [];
+      if(date.value === lastDate) {
+         return;
+      } else {
+         lastDate = date.value;
+
+         finalGroup = filterByDate(new Date(lastDate));
+
+         finalGroup = finalGroup.filter(function(entry) {
+            return entry.course != "Parstock";
+         });
+
+         meals_list = []
+            for (let i=0; i<dining_halls.length; i++) {
+               for(let j=0; j<meals.length; j++) {
+                  group = finalGroup.filter(function(entry) {
+                     return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
+                  });
+                  if (group.length != 0) {
+                     meals_list.push(group);
+                  }
+               }
+            }
+         updateDisplay(meals_list);
+      }
+   }
 
 
    /* 
@@ -149,6 +187,7 @@ function initialize() {
 
    // updates display to only include menus from finalGroup
    function updateDisplay(meals_list) {
+      console.log(meals_list);
 
       // remove the previous contents of the columns
       for(let i=0; i<columns.length; i++) {
@@ -163,6 +202,7 @@ function initialize() {
          para.textContent = 'No results to display.';
          columns[0].appendChild(para);
       } else {
+         // alert("update");
          for(let i = 0; i < meals_list.length; i++) {
             showMeal(meals_list[i]);
          }
@@ -182,15 +222,24 @@ function initialize() {
 
       meal.innerHTML = '<span class="label">meal: </span>' +menu_items[0].meal_type;
 
-      // for (let i=0; i<menu_items.length; i++) {
-         
-      // }
+      // sort by: soups, entrees, starches, sauces, yogurt, desserts (lunch and dinner)
+      // breakfast: entree, cereals, fruits
+
+      for (let i=0; i<menu_items.length; i++) {
+         console.log(menu_items[i].item_name);
+         let single_item = document.createElement('li');
+         single_item.innerHTML = menu_items[i].item_name;
+         items.append(single_item);
+      }
 
       index = (index + 1)%3
       columns[index].appendChild(section);
       // section.appendChild(image);
       section.append(heading);
       section.append(meal);
+      section.append(items);
+      // section.append(item)
+
       // section.append(area);
       // section.append(year_built);
       // section.append(capacity);
