@@ -1,7 +1,14 @@
+// KNOWN BUGS
+// Ziskind Kosher doesn't show up
+// Inefficient sorting/filtering by meal/date/area
+
+
 // this will hold the json of menus
 let menus;
 // list of dining halls
 let dining_halls = ["CHAPIN", "CHASE/DUCKETT", "CUSHING/EMERSON", "CUTTER/ZISKIND", "HUBBARD", "KING/SCALES", "LAMONT", "WILSON", "NORTHROP/GILLETT", "TYLER"];
+// list of all possible meals
+let meals = ["BREAKFAST", "LUNCH", "DINNER"]
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -28,29 +35,46 @@ function initialize() {
    let index = 0;
 
    // --------------------------------------------------------------
-   // DEFAULT: display the menu items for that day
+   // DEFAULT DATE: display the menu items for that day
    let finalGroup;
    finalGroup = filterByDate(new Date());
-   console.log(finalGroup);
 
    // --------------------------------------------------------------
-   console.log(menus[0].dining_hall === dining_halls[0]);
+   // FILTERING WILL HAPPEN HERE
 
-   // sort by: entrees, condiments, desserts
-   for (d in dining_halls) {
-      console.log(d);
-      group = finalGroup.filter(function(entry) {
-         return entry.dining_hall === dining_halls[d] && entry.meal_type === "DINNER";
-      });
-      console.log(group);
-   }
-   // chapin = finalGroup.filter(function (entry) {
-   //    return entry.dining_hall === dining_halls[0] && entry.meal_type === "DINNER";
-   // });
-   // console.log(chapin);
+   // FILTER OUT PARSTOCK ITEMS
+   finalGroup = finalGroup.filter(function(entry) {
+      return entry.course != "Parstock";
+   });
+
+   // --------------------------------------------------------------
+   // SORT INTO DISPLAY GROUPS
+   /* NOTE: This is probably not the most efficient way to do this, but I can't think 
+      of anything better aside from infinite if statements 
+      some kind of groupby statement would be ideal. I don't know if it would be possible
+      to do that in the SQL formatter rather than here */
+
+   // one possibility: one for loop with many if statements for each dining hall
+   // then send that to some kind of "group" method
+
+   // what we want - to make a group object for every day, meal, and house
+
+   meals_list = []
+   for (let i=0; i<dining_halls.length; i++) {
+         for(let j=0; j<meals.length; j++) {
+            group = finalGroup.filter(function(entry) {
+               return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
+            });
+            if (group.length != 0) {
+               meals_list.push(group);
+            }
+         }
+      }
+
+   console.log(meals_list);
    
-   // updateDisplay();
-}
+   updateDisplay(meals_list);
+
 
    /* 
    function to filter menu items by date. 
@@ -124,7 +148,8 @@ function initialize() {
    }
 
    // updates display to only include menus from finalGroup
-   function updateDisplay() {
+   function updateDisplay(meals_list) {
+
       // remove the previous contents of the columns
       for(let i=0; i<columns.length; i++) {
          while (columns[i].firstChild) {
@@ -138,33 +163,33 @@ function initialize() {
          para.textContent = 'No results to display.';
          columns[0].appendChild(para);
       } else {
-         for(let i = 0; i < finalGroup.length; i++) {
-           fetchBlob(finalGroup[i]);
+         for(let i = 0; i < meals_list.length; i++) {
+            showMeal(meals_list[i]);
          }
       }
    }
 
-   // fetchBlob uses fetch to retrieve the image for that house, and then
-   // sends the resulting image display URL and house object on to showHouse()
-   // to finally display it
-   function fetchBlob(house) {
-     // construct the URL path to the image file from the product.image property
-     let url = 'images/' + "tyler.jpg";
-     // Use fetch to fetch the image, and convert the resulting response to a blob
-     // Again, if any errors occur we report them in the console.
-     fetch(url).then(function(response) {
-       if(response.ok) {
-         response.blob().then(function(blob) {
-           // Convert the blob to an object URL — this is basically an temporary internal URL
-           // that points to an object stored inside the browser
-           objectURL = URL.createObjectURL(blob);
-           // invoke showHouse
-           showHouse(house);
-         });
-       } else {
-         console.log('Network request for "' + house.name + '" image failed with response ' + response.status + ': ' + response.statusText);
-       }
-     });
+   /* this function displays menu items for a given meal/location/date */
+   function showMeal(menu_items) {
+      console.log(menu_items);
+
+      let section = document.createElement('section');
+      let heading = document.createElement('p');
+      let meal = document.createElement('p');
+
+      heading.innerHTML = menu_items[0].dining_hall;
+
+      meal.innerHTML = '<span class="label">meal: </span>' +menu_items[0].meal_type;
+
+
+      index = (index + 1)%3
+      columns[index].appendChild(section);
+      // section.appendChild(image);
+      section.append(heading);
+      section.append(meal);
+      // section.append(area);
+      // section.append(year_built);
+      // section.append(capacity);
    }
 
    // display a house in a sinlge column
@@ -203,9 +228,10 @@ function initialize() {
       //append the elements to the DOM so the house displays
       index = (index + 1)%3
       columns[index].appendChild(section);
-      section.appendChild(image);
+      // section.appendChild(image);
       section.appendChild(heading);
       section.append(area);
       section.append(year_built);
       section.append(capacity);
    }
+}
