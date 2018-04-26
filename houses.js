@@ -176,11 +176,15 @@ function initialize() {
       let section = document.createElement('section');
       let heading = document.createElement('p');
       let meal = document.createElement('p');
+      let items = document.createElement('ul');
 
       heading.innerHTML = menu_items[0].dining_hall;
 
       meal.innerHTML = '<span class="label">meal: </span>' +menu_items[0].meal_type;
 
+      // for (let i=0; i<menu_items.length; i++) {
+         
+      // }
 
       index = (index + 1)%3
       columns[index].appendChild(section);
