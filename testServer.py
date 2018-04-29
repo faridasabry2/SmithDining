@@ -22,7 +22,7 @@ for row in cursor:
 
 
 # need to figure out how to get this to filter between dates
-cursor.execute('SELECT * FROM av_srv_menu_detail WHERE eventdate >= Convert(Date, GetDate(), 101) AND eventdate <= Convert(Date, GetDate()+100, 101) ORDER BY eventdate, service_unit, meal')
+cursor.execute('SELECT * FROM av_srv_menu_detail WHERE eventdate >= Convert(Date, GetDate(), 101) AND eventdate <= Convert(Date, GetDate()+100, 101) ORDER BY eventdate, service_unit, CASE meal WHEN "BREAKFAST" then 1 WHEN "LUNCH" then 2 when "DINNER" then 3 ELSE 4 END')
 
 menu_list = []
 
