@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from os import getenv
 import pymssql
 import json
@@ -47,4 +49,7 @@ for row in cursor:
 
 	menu_list.append(row_as_dict)	
 
-print(json.dumps(menu_list))
+#print(json.dumps(menu_list))
+
+with open("menus.json", "w") as outfile:
+	json.dump(menu_list, outfile)
