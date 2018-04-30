@@ -4,13 +4,46 @@ from os import getenv
 import pymssql
 import json
 
+# function to sort items by course
+# acts as the key in a sorted() call
+def key_func(key_str):
+	if key_str == "Soups":
+		val = 1
+	if key_str == "Entrees":
+		val = 2
+	elif key_str == "Starches":
+		val = 3
+	elif key_str == "Vegetables":
+		val = 4
+	elif key_str == "Sauces":
+		val = 5
+	elif key_str == "Bread":
+		val = 6
+	elif key_str == "Cereals":
+		val = 7
+	elif key_str == "Deli":
+		val = 8
+	elif key_str == "Salads":
+		val = 9
+	elif key_str == "Salad Bar":
+		val = 10
+	elif key_str == "Desserts":
+		val = 11
+	elif key_str == "Fruits":
+		val = 12
+	elif key_str == "YOGURT":
+		val = 13
+	else:
+		val = 14
+	return val
+
+
 # connect to the sql server
 conn = pymssql.connect("cbord3.smith.edu", "estephenson", "3d4vLDBoYNtq", "cbord")
 cursor = conn.cursor(as_dict=True)
 
 # load the json of all allergens
 allergen_dict = json.load(open('allergens.json'))
-
 
 # query database for: all meals within the next 100 days
 # order by date, dining hall, and meal type (breakfast/lunch/dinner)
@@ -38,26 +71,50 @@ for row in cursor:
 	else:
 		allergens = []
 
-	key = date + " " + dining_hall + " " + meal_type
 
 	# do not include parstock listings (things like tea, condiments, cereal, etc)	
-	if "parstock" not in item_name.lower():	
+	if "parstock" not in item_name.lower():
 
-		# create an item row			
-		row_as_dict = {
+		# create an item row
+		item_as_dict = {
 			'item_id' : item_id,
 			'item_name' : item_name,
 			'course' : course,
-			'allergens' : allergens}
+			'allergens' : allergens
+		}
 
-		# if the menu list is not empty and the last entry is the key:
-		# add current item to list
-		if len(menu_list) !=0 and menu_list[-1][0] == key:
-			menu_list[-1][1].append(row_as_dict)
-		
-		# key not yet in list, add it
+		# if meal/date/location combo already exists, add item to list
+		if len(menu_list) != 0 and (menu_list[-1]["date"] == date and menu_list[-1]["dining_hall"] == dining_hall and menu_list[-1]["meal_type"] == meal_type):
+			# add to existing items list
+			menu_list[-1]["items"].append(item_as_dict)
+
+		# otherwise, make a new row
 		else:
-			menu_list.append([key, [row_as_dict]])
+			description = {
+				'date' : date,
+				'dining_hall' : dining_hall,
+				'meal_type' : meal_type,
+				'items' : [item_as_dict]
+			}
+			menu_list.append(description)
+
+
+# clean up data before writing to json
+for i in range(len(menu_list)):
+	# create order for breakfast, lunch, dinner
+	if i != 0:
+		current = menu_list[i]
+		prev = menu_list[i-1]
+		# swap lunch and dinner
+		if current['meal_type'] == 'LUNCH' and (prev['meal_type'] == 'DINNER' and prev['dining_hall'] == current['dining_hall']):
+			menu_list[i-1] = current #set lunch to i-1
+			menu_list[i] = prev #set dinner to i
+
+	# sort menu items by course
+	items = menu_list[i]['items']
+	sorted_items = sorted(items, key=lambda item: key_func(item['course']))
+	menu_list[i]['items'] = sorted_items
+
 
 # write results to menus.json file
 with open("menus.json", "w") as outfile:
