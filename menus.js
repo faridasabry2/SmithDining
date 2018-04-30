@@ -1,6 +1,8 @@
 // this will hold the json of menus
 let menus;
 
+let searchTerm="";
+
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
 // using response.json(), run the initialize() function
@@ -21,7 +23,6 @@ function initialize() {
    // create div to hold items
    let main = document.querySelector("#main");
 
-
    // --------------------------------------------------------------
    // DEFAULT DATE: display the menu items for that day
    let finalGroup;
@@ -34,6 +35,8 @@ function initialize() {
    let filterBtn = document.querySelector('button');
    let date = document.getElementById('datepicker');
    lastDate = date.value;
+
+   filterBtn.onclick=filter;
 
    // SELECT DATE 
    date.onchange = selectDate;
@@ -112,6 +115,17 @@ function initialize() {
       return results;
    }
 
+   function filter(e){
+      //prevent page from reloading
+      e.preventDefault();
+
+
+      //grab search term
+      searchTerm = document.getElementById('searchTerm').value.toLowerCase();
+      console.log(searchTerm);
+      updateDisplay(finalGroup);
+   }
+
    // this helper function takes in a list of checkboxes, the attribute they're
    // related to, and the group they connect to. The list of checkboxes is
    // iterated over, and boxes that are checked are filtered through the list
@@ -128,23 +142,12 @@ function initialize() {
       }
    }
 
-   // this function takes the four groups and merges them,
-   // putting only menus that qualify for all four categories
-   // into the final group.
-   function mergeGroups() {
-      for(let i=0; i<menus.length; i++) {
-         let currentHouse = menus[i];
-         if(areaGroup.includes(currentHouse) &&
-         accessibleGroup.includes(currentHouse) &&
-         numStudentsGroup.includes(currentHouse) &&
-         elevatorGroup.includes(currentHouse)) {
-            finalGroup.push(currentHouse);
-         }
-      }
-   }
-
    // updates display to only include menus from finalGroup
    function updateDisplay(meals_list) {
+      //clear the page
+      while (main.firstChild) {
+         main.removeChild(main.firstChild);
+      }
 
       // remove the previous contents of the columns
       // for(let i=0; i<columns.length; i++) {
@@ -154,7 +157,7 @@ function initialize() {
       // }
 
       //if no menus match, display "no results to display" message
-      if (finalGroup.length === 0) {
+      if (meals_list.length === 0) {
          let para = document.createElement('h5');
          para.textContent = 'No results to display.';
          main.appendChild(para);
@@ -178,7 +181,7 @@ function initialize() {
    /* this function displays menu items for a given meal/location/date */
    function showMeal(menu_items) {
 
-      console.log(menu_items);
+      //console.log(menu_items);
 
       // row + heding 
       let section = document.createElement('section');
@@ -190,7 +193,7 @@ function initialize() {
 
       // Items
       for (let i=0; i < menu_items.length; i++) {
-         console.log(i);
+         //console.log(i);
          let col = document.createElement('div');
          col.setAttribute('class', "col-md-4");
          section.appendChild(col);
@@ -204,16 +207,19 @@ function initialize() {
          }
 
          let dishes = menu_items[i];
-         console.log(dishes);
+         //console.log(dishes);
 
          // items
          let items = document.createElement('ul');
 
          // iterate over items
          for (let j=0; j<dishes.items.length; j++) {
-            let single_item = document.createElement('li');
-            single_item.innerHTML = dishes.items[j].item_name;
-            items.append(single_item);
+            if(dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
+               console.log(searchTerm);  
+               let single_item = document.createElement('li');
+               single_item.innerHTML = dishes.items[j].item_name;
+               items.append(single_item);
+            }
          }
 
          col.appendChild(items);
