@@ -147,15 +147,14 @@ function initialize() {
    function updateDisplay(meals_list) {
 
       // remove the previous contents of the columns
-      // for(let i=0; i<columns.length; i++) {
-      //    while (columns[i].firstChild) {
-      //       columns[i].removeChild(columns[i].firstChild);
-      //    }
-      // }
+      while (main.hasChildNodes()) {
+         main.removeChild(main.lastChild);
+      }
 
       //if no menus match, display "no results to display" message
       if (finalGroup.length === 0) {
          let para = document.createElement('h5');
+         para.setAttribute('class', "error")
          para.textContent = 'No results to display.';
          main.appendChild(para);
       } else {
@@ -182,32 +181,40 @@ function initialize() {
 
       // row + heding 
       let section = document.createElement('section');
+      section.setAttribute('class', "diningHall")
 
-      // heading 
+      // dining hall heading 
       let heading = document.createElement('div');
+      heading.setAttribute('class', "heading")
       heading.innerHTML = menu_items[0].dining_hall;
       section.appendChild(heading);
+
+      // columns
+      let breakfast = document.createElement('div');      
+      let lunch = document.createElement('div');      
+      let dinner = document.createElement('div');
+
+      breakfast.classList.add('breakfast', 'col-md-4'); 
+      lunch.classList.add('lunch', 'col-md-4'); 
+      dinner.classList.add('dinner', 'col-md-4'); 
+
+      section.appendChild(breakfast);
+      section.appendChild(lunch);
+      section.appendChild(dinner);
+
 
       // Items
       for (let i=0; i < menu_items.length; i++) {
          console.log(i);
-         let col = document.createElement('div');
-         col.setAttribute('class', "col-md-4");
-         section.appendChild(col);
-
-         if (menu_items[i].meal_type === "BREAKFAST") {
-            col.setAttribute('class', "breakfast");
-         } else if (menu_items[i].meal_type === "LUNCH") {
-            col.setAttribute('class', "lunch");
-         } else {
-            col.setAttribute('class', "dinner");
-         }
 
          let dishes = menu_items[i];
-         console.log(dishes);
 
          // items
          let items = document.createElement('ul');
+
+         // meal heading
+         let p = document.createElement('h4');
+         items.appendChild(p);
 
          // iterate over items
          for (let j=0; j<dishes.items.length; j++) {
@@ -216,9 +223,24 @@ function initialize() {
             items.append(single_item);
          }
 
-         col.appendChild(items);
-      }
+         if (menu_items[i].meal_type === "BREAKFAST") {
+            breakfast.appendChild(items);
+            breakfast.classList.add('active'); 
+            p.innerHTML = "Breakfast";
 
+         } else if (menu_items[i].meal_type === "LUNCH") {
+            lunch.appendChild(items);
+            lunch.classList.add('active');   
+            p.innerHTML = "Lunch";  
+
+         } else {
+            dinner.appendChild(items);
+            dinner.classList.add('active'); 
+            p.innerHTML = "Dinner";        
+         }
+
+        
+      }
       main.appendChild(section);
    }
 

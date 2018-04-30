@@ -1,5 +1,10 @@
 /* General */
 
+* {
+   padding: 0;
+   margin: 0;
+}
+
 body {
    font-family: 'Open Sans', sans-serif;
 }
@@ -29,6 +34,13 @@ section {
 p {
    margin: 0;
 }
+ul {
+  list-style-type: none;
+}
+section{ 
+   margin-bottom: 40px;
+}
+
 .label {
    font-style: italic;
 }
@@ -44,4 +56,52 @@ p {
 .header {
    padding-top: 2%;
    padding-bottom: 2%;
+}
+
+/* Meals */
+
+.heading {
+   text-align: center;
+   margin-bottom: 20px;
+   font-size: 28px;
+   background-color: #eeeeee;
+}
+
+.mealHeadings {
+   width: 100%;
+   text-align: center;
+}
+
+.mealHeadings li {
+   display: inline;
+
+}
+
+.breakfast {
+   display: inline-block;
+   width: 33%;
+   vertical-align:top;
+}
+
+.lunch {
+   display: inline-block;
+   width: 33%;
+   vertical-align:top;
+}
+
+.dinner {
+   display: inline-block;
+   width: 33%;
+   vertical-align:top;
+}
+
+/* ERROR */
+.error {
+   text-align: center;
+}
+
+/* Active */
+.active {
+   text-align: center;
+   /*border: solid  black;*/
 }
