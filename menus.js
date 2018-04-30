@@ -1,9 +1,3 @@
-// KNOWN BUGS
-// Ziskind Kosher doesn't show up
-// Should make meal/date/location string into an object inside the python server
-// doing some inefficient sub-stringing of data
-
-
 // this will hold the json of menus
 let menus;
 
@@ -33,38 +27,9 @@ function initialize() {
 
    // --------------------------------------------------------------
    // DEFAULT DATE: display the menu items for that day
-   // filter out parstock items
    let finalGroup;
    finalGroup = filterByDate(new Date());
 
-   console.log(finalGroup);
-
-   // --------------------------------------------------------------
-   // SORT INTO DISPLAY GROUPS
-   /* NOTE: This is probably not the most efficient way to do this, but I can't think 
-      of anything better aside from infinite if statements 
-      some kind of groupby statement would be ideal. I don't know if it would be possible
-      to do that in the SQL formatter rather than here */
-
-   // one possibility: one for loop with many if statements for each dining hall
-   // then send that to some kind of "group" method
-
-   // what we want - to make a group object for every day, meal, and house
-
-   // meals_list = []
-   // for (let i=0; i<dining_halls.length; i++) {
-   //       for(let j=0; j<meals.length; j++) {
-   //          group = finalGroup.filter(function(entry) {
-   //             return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
-   //          });
-   //          if (group.length != 0) {
-   //             meals_list.push(group);
-   //          }
-   //       }
-   //    }
-
-   // // console.log(meals_list);
-   
    updateDisplay(finalGroup);
 
    // --------------------------------------------------------------
@@ -123,8 +88,7 @@ function initialize() {
          // user passed in a single date
          // filter menus on this specific date
          results = menus.filter(function (entry) {
-            // extract date digits from key in list
-            menuDate = new Date(entry[0].substring(0, 10));
+            menuDate = new Date(entry.date);
             return menuDate.toDateString() === queryDates.toDateString();
          });
       } 
@@ -141,7 +105,7 @@ function initialize() {
             // append that day's menu items to the list
             results.push(
                menus.filter(function (entry) {
-                  menuDate = new Date(entry[0].substring(0, 10));
+                  menuDate = new Date(entry.date);
                   return menuDate.toDateString() === current.toDateString();
                }));
             // increment current
@@ -198,9 +162,7 @@ function initialize() {
          para.textContent = 'No results to display.';
          columns[0].appendChild(para);
       } else {
-         // alert("update");
          for(let i = 0; i < meals_list.length; i++) {
-            // console.log(meals_list[i]);
             showMeal(meals_list[i]);
          }
       }
@@ -213,30 +175,23 @@ function initialize() {
       let heading = document.createElement('p');
       let items = document.createElement('ul');
 
-      // get dining hall
-      heading.innerHTML = menu_items[0].substring(20);
+      // get dining hall in header
+      heading.innerHTML = menu_items.dining_hall;
 
-      // sort by: soups, entrees, starches, sauces, yogurt, desserts (lunch and dinner)
-      // breakfast: entree, cereals, fruits
-
-      console.log(menu_items[1]);
-
-      for (let i=0; i<menu_items[1].length; i++) {
-         console.log(menu_items[1][i]);
+      for (let i=0; i<menu_items.items.length; i++) {
          let single_item = document.createElement('li');
-         single_item.innerHTML = menu_items[1][i].item_name;
+         single_item.innerHTML = menu_items.items[i].item_name;
          items.append(single_item);
       }
 
-      index = (index + 1)%3
-      // if (menu_items[0].meal_type === "BREAKFAST") {
-      //    index = 0;
-      // } 
-      // else if (menu_items[0].meal_type === "LUNCH") {
-      //    index = 1;
-      // } else if (menu_items[0].meal_type === "DINNER") {
-      //    index = 2;
-      // }
+      if (menu_items.meal_type === "BREAKFAST") {
+         index = 0;
+      } 
+      else if (menu_items.meal_type === "LUNCH") {
+         index = 1;
+      } else if (menu_items.meal_type === "DINNER") {
+         index = 2;
+      }
       columns[index].appendChild(section);
       // section.appendChild(image);
       section.append(heading);
