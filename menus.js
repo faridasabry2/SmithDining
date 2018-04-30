@@ -1,15 +1,11 @@
 // KNOWN BUGS
 // Ziskind Kosher doesn't show up
-// Inefficient sorting/filtering by meal/date/area
+// Should make meal/date/location string into an object inside the python server
+// doing some inefficient sub-stringing of data
 
 
 // this will hold the json of menus
 let menus;
-// list of dining halls
-let dining_halls = ["CHAPIN", "CHASE/DUCKETT", "CUSHING/EMERSON", "CUTTER/ZISKIND", "HUBBARD", "KING/SCALES", "LAMONT", "WILSON", "NORTHROP/GILLETT", "TYLER"];
-// list of all possible meals
-let meals = ["BREAKFAST", "LUNCH", "DINNER"]
-
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -39,9 +35,9 @@ function initialize() {
    // DEFAULT DATE: display the menu items for that day
    // filter out parstock items
    let finalGroup;
-   finalGroup = filterByDate(new Date()).filter(function(entry) {
-      return entry.course != "Parstock";
-   });
+   finalGroup = filterByDate(new Date());
+
+   console.log(finalGroup);
 
    // --------------------------------------------------------------
    // SORT INTO DISPLAY GROUPS
@@ -55,21 +51,21 @@ function initialize() {
 
    // what we want - to make a group object for every day, meal, and house
 
-   meals_list = []
-   for (let i=0; i<dining_halls.length; i++) {
-         for(let j=0; j<meals.length; j++) {
-            group = finalGroup.filter(function(entry) {
-               return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
-            });
-            if (group.length != 0) {
-               meals_list.push(group);
-            }
-         }
-      }
+   // meals_list = []
+   // for (let i=0; i<dining_halls.length; i++) {
+   //       for(let j=0; j<meals.length; j++) {
+   //          group = finalGroup.filter(function(entry) {
+   //             return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
+   //          });
+   //          if (group.length != 0) {
+   //             meals_list.push(group);
+   //          }
+   //       }
+   //    }
 
-   // console.log(meals_list);
+   // // console.log(meals_list);
    
-   updateDisplay(meals_list);
+   updateDisplay(finalGroup);
 
    // --------------------------------------------------------------
    // FILTERING WILL HAPPEN HERE
@@ -127,7 +123,8 @@ function initialize() {
          // user passed in a single date
          // filter menus on this specific date
          results = menus.filter(function (entry) {
-            menuDate = new Date(entry.date);
+            // extract date digits from key in list
+            menuDate = new Date(entry[0].substring(0, 10));
             return menuDate.toDateString() === queryDates.toDateString();
          });
       } 
@@ -144,7 +141,7 @@ function initialize() {
             // append that day's menu items to the list
             results.push(
                menus.filter(function (entry) {
-                  menuDate = new Date(entry.date);
+                  menuDate = new Date(entry[0].substring(0, 10));
                   return menuDate.toDateString() === current.toDateString();
                }));
             // increment current
@@ -187,7 +184,6 @@ function initialize() {
 
    // updates display to only include menus from finalGroup
    function updateDisplay(meals_list) {
-      console.log(meals_list);
 
       // remove the previous contents of the columns
       for(let i=0; i<columns.length; i++) {
@@ -204,6 +200,7 @@ function initialize() {
       } else {
          // alert("update");
          for(let i = 0; i < meals_list.length; i++) {
+            // console.log(meals_list[i]);
             showMeal(meals_list[i]);
          }
       }
@@ -211,40 +208,38 @@ function initialize() {
 
    /* this function displays menu items for a given meal/location/date */
    function showMeal(menu_items) {
-      console.log(menu_items);
 
       let section = document.createElement('section');
       let heading = document.createElement('p');
-      let meal = document.createElement('p');
       let items = document.createElement('ul');
 
-      heading.innerHTML = menu_items[0].dining_hall;
-
-      meal.innerHTML = '<span class="label">meal: </span>' +menu_items[0].meal_type;
+      // get dining hall
+      heading.innerHTML = menu_items[0].substring(20);
 
       // sort by: soups, entrees, starches, sauces, yogurt, desserts (lunch and dinner)
       // breakfast: entree, cereals, fruits
 
-      for (let i=0; i<menu_items.length; i++) {
-         console.log(menu_items[i].item_name);
+      console.log(menu_items[1]);
+
+      for (let i=0; i<menu_items[1].length; i++) {
+         console.log(menu_items[1][i]);
          let single_item = document.createElement('li');
-         single_item.innerHTML = menu_items[i].item_name;
+         single_item.innerHTML = menu_items[1][i].item_name;
          items.append(single_item);
       }
 
-      // index = (index + 1)%3
-      if (menu_items[0].meal_type === "BREAKFAST") {
-         index = 0;
-      } 
-      else if (menu_items[0].meal_type === "LUNCH") {
-         index = 1;
-      } else if (menu_items[0].meal_type === "DINNER") {
-         index = 2;
-      }
+      index = (index + 1)%3
+      // if (menu_items[0].meal_type === "BREAKFAST") {
+      //    index = 0;
+      // } 
+      // else if (menu_items[0].meal_type === "LUNCH") {
+      //    index = 1;
+      // } else if (menu_items[0].meal_type === "DINNER") {
+      //    index = 2;
+      // }
       columns[index].appendChild(section);
       // section.appendChild(image);
       section.append(heading);
-      section.append(meal);
       section.append(items);
       // section.append(item)
 
@@ -253,46 +248,4 @@ function initialize() {
       // section.append(capacity);
    }
 
-   // display a house in a sinlge column
-   // includes image, house name, area of campus, year built, and capacity
-   function showHouse(house) {
-
-      // create new HTML elements that will be needed
-      let section = document.createElement('section');
-      let heading = document.createElement('p');
-      let image = document.createElement('img');
-      let area = document.createElement('p');
-      let capacity = document.createElement('p');
-      let year_built = document.createElement('p');
-
-      heading.innerHTML=house.item_name;
-
-      // give the <h4> textContent equal to the house "name" property
-      // added link to floorplan here
-      /*heading.innerHTML = "<a href='"+house.floor_plan+"' target='_blank' class='houseName'>"+house.name+"</a>";
-
-      // set the src of the <img> element to the ObjectURL, set
-      // the alt to the house "name" property
-      image.src = objectURL;
-      image.alt = house.name;
-
-      // add contextual information about the house: area, year built, capacity
-      area.className = "areaOfCampus";
-      area.innerHTML = '<span class="label">area: </span>' +house.area;
-
-      year_built.className = "year";
-      year_built.innerHTML = '<span class="label">year built: </span>' +house.year_built;
-
-      capacity.className = "cap";
-      capacity.innerHTML = '<span class="label">capacity: </span>'+house.capacity;*/
-
-      //append the elements to the DOM so the house displays
-      index = (index + 1)%3
-      columns[index].appendChild(section);
-      // section.appendChild(image);
-      section.appendChild(heading);
-      section.append(area);
-      section.append(year_built);
-      section.append(capacity);
-   }
 }
