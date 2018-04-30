@@ -18,12 +18,9 @@ fetch('menus.json').then(function(response) {
 /* function sets up the initial page */
 function initialize() {
 
-   // create array to hold columns for results
-   let c1 = document.querySelector('#one');
-   let c2 = document.querySelector('#two');
-   let c3 = document.querySelector('#three');
-   let columns = [c1, c2, c3];
-   let index = 0;
+   // create div to hold items
+   let main = document.querySelector("#main");
+
 
    // --------------------------------------------------------------
    // DEFAULT DATE: display the menu items for that day
@@ -150,20 +147,30 @@ function initialize() {
    function updateDisplay(meals_list) {
 
       // remove the previous contents of the columns
-      for(let i=0; i<columns.length; i++) {
-         while (columns[i].firstChild) {
-            columns[i].removeChild(columns[i].firstChild);
-         }
-      }
+      // for(let i=0; i<columns.length; i++) {
+      //    while (columns[i].firstChild) {
+      //       columns[i].removeChild(columns[i].firstChild);
+      //    }
+      // }
 
       //if no menus match, display "no results to display" message
       if (finalGroup.length === 0) {
          let para = document.createElement('h5');
          para.textContent = 'No results to display.';
-         columns[0].appendChild(para);
+         main.appendChild(para);
       } else {
+         current = meals_list[0].dining_hall;
+         group = [];
          for(let i = 0; i < meals_list.length; i++) {
-            showMeal(meals_list[i]);
+            if(meals_list[i].dining_hall === current) {
+               group.push(meals_list[i]);
+            } else {
+               showMeal(group);
+               group = [];
+               group.push(meals_list[i]);
+            }
+
+            current = meals_list[i].dining_hall;
          }
       }
    }
@@ -171,36 +178,48 @@ function initialize() {
    /* this function displays menu items for a given meal/location/date */
    function showMeal(menu_items) {
 
+      console.log(menu_items);
+
+      // row + heding 
       let section = document.createElement('section');
-      let heading = document.createElement('p');
-      let items = document.createElement('ul');
 
-      // get dining hall in header
-      heading.innerHTML = menu_items.dining_hall;
+      // heading 
+      let heading = document.createElement('div');
+      heading.innerHTML = menu_items[0].dining_hall;
+      section.appendChild(heading);
 
-      for (let i=0; i<menu_items.items.length; i++) {
-         let single_item = document.createElement('li');
-         single_item.innerHTML = menu_items.items[i].item_name;
-         items.append(single_item);
+      // Items
+      for (let i=0; i < menu_items.length; i++) {
+         console.log(i);
+         let col = document.createElement('div');
+         col.setAttribute('class', "col-md-4");
+         section.appendChild(col);
+
+         if (menu_items[i].meal_type === "BREAKFAST") {
+            col.setAttribute('class', "breakfast");
+         } else if (menu_items[i].meal_type === "LUNCH") {
+            col.setAttribute('class', "lunch");
+         } else {
+            col.setAttribute('class', "dinner");
+         }
+
+         let dishes = menu_items[i];
+         console.log(dishes);
+
+         // items
+         let items = document.createElement('ul');
+
+         // iterate over items
+         for (let j=0; j<dishes.items.length; j++) {
+            let single_item = document.createElement('li');
+            single_item.innerHTML = dishes.items[j].item_name;
+            items.append(single_item);
+         }
+
+         col.appendChild(items);
       }
 
-      if (menu_items.meal_type === "BREAKFAST") {
-         index = 0;
-      } 
-      else if (menu_items.meal_type === "LUNCH") {
-         index = 1;
-      } else if (menu_items.meal_type === "DINNER") {
-         index = 2;
-      }
-      columns[index].appendChild(section);
-      // section.appendChild(image);
-      section.append(heading);
-      section.append(items);
-      // section.append(item)
-
-      // section.append(area);
-      // section.append(year_built);
-      // section.append(capacity);
+      main.appendChild(section);
    }
 
 }
