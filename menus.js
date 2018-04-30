@@ -55,22 +55,22 @@ function initialize() {
 
          finalGroup = filterByDate(new Date(lastDate));
 
-         finalGroup = finalGroup.filter(function(entry) {
-            return entry.course != "Parstock";
-         });
+         // finalGroup = finalGroup.filter(function(entry) {
+         //    return entry.course != "Parstock";
+         // });
 
-         meals_list = []
-            for (let i=0; i<dining_halls.length; i++) {
-               for(let j=0; j<meals.length; j++) {
-                  group = finalGroup.filter(function(entry) {
-                     return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
-                  });
-                  if (group.length != 0) {
-                     meals_list.push(group);
-                  }
-               }
-            }
-         updateDisplay(meals_list);
+         // meals_list = []
+         //    for (let i=0; i<dining_halls.length; i++) {
+         //       for(let j=0; j<meals.length; j++) {
+         //          group = finalGroup.filter(function(entry) {
+         //             return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
+         //          });
+         //          if (group.length != 0) {
+         //             meals_list.push(group);
+         //          }
+         //       }
+         //    }
+         updateDisplay(finalGroup);
       }
    }
 
