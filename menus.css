@@ -6,7 +6,16 @@
 }
 
 body {
-   font-family: 'Open Sans', sans-serif;
+   /*font-family: 'Open Sans', sans-serif;*/
+   font-family: 'Roboto Slab', serif;
+}
+
+.container {
+   width: 100%;
+}
+
+main {
+   margin: 0%;
 }
 
 select {
@@ -63,8 +72,13 @@ section{
 .heading {
    text-align: center;
    margin-bottom: 20px;
-   font-size: 28px;
-   background-color: #eeeeee;
+   font-size: 20px;
+   text-transform: lowercase;
+   background-color: #f7cf9e;
+}
+
+.heading:first-letter {
+   text-transform: uppercase;
 }
 
 .mealHeadings {
@@ -79,19 +93,22 @@ section{
 
 .breakfast {
    display: inline-block;
-   width: 33%;
+   width: 30%;
+   margin: 0% 1%;
    vertical-align:top;
 }
 
 .lunch {
    display: inline-block;
-   width: 33%;
+   width: 30%;
+   margin: 0% 1%;
    vertical-align:top;
 }
 
 .dinner {
    display: inline-block;
-   width: 33%;
+   width: 30%;
+   margin: 0% 1%;
    vertical-align:top;
 }
 

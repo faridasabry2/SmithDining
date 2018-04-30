@@ -179,6 +179,7 @@ function initialize() {
 
    /* this function displays menu items for a given meal/location/date */
    function showMeal(menu_items) {
+
       // row + heding 
       let section = document.createElement('section');
       section.setAttribute('class', "diningHall")
@@ -257,5 +258,4 @@ function initialize() {
       }
       main.appendChild(section);
    }
-
 }
