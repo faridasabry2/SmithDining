@@ -3,7 +3,8 @@
 <head>
   <title> Smith College Dining Menu</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="styleshet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
 <!--    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
  -->   
   <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
@@ -14,87 +15,90 @@
 
 </head>
 <body>
-    <div class="container">
-      <div class="row">
-         <h2 class="header">Smith Dining Menu</h2>
-      </div>
-      <div class="row filter">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-light bg-light">
+    <div class="navbar-brand icon">
+      <button class="fa fa-bars" id="collapse" onClick="hide()"></button>Smith Dining Menu
+    </div>
+  </nav>
 
-          <div class="col-md-3">
-            <form>
+  <!-- row -->
+  <div class="row">
 
-              <!-- Calendar Date -->
-              <p>Date: <input type="text" id="datepicker"></p>
-          
-              <hr>
+    <!-- Sidebar -->
+    <div class="col-md-3 show" id="sidebar">
+      <form >
+        <!-- Calendar Date -->
+        <p>Date: <input type="text" id="datepicker"></p>
 
-              <!-- Are of campus dropdown -->
-              <div>
-                <label for="area">Area of campus:</label>            
-                <select id="area">
-                  <option selected>All</option>
-                  <option>Green Street</option>
-                  <option>Center Campus</option>
-                  <option>East Quad</option>
-                  <option>West Quad</option>
-                  <option>Lower Elm Street</option>
-                  <option>Upper Elm Street</option>
-                </select>
-              </div>
+        <hr>
 
-              <hr>
+        <!-- Are of campus dropdown -->
+        <div>
+          <label for="area">Area of campus:</label>            
+          <select id="area">
+            <option selected>All</option>
+            <option>Green Street</option>
+            <option>Center Campus</option>
+            <option>East Quad</option>
+            <option>West Quad</option>
+            <option>Lower Elm Street</option>
+            <option>Upper Elm Street</option>
+          </select>
+        </div>
 
-              <!-- Dietary Restriction -->
-              <div>
-                 <label for="diet">Dietary Restriction:</label>
-                 <select id="diet">
-                   <option selected>None</option>
-                   <option>Vegetarian</option>
-                   <option>Vegan</option>
-                   <option>Gluten Free</option>
-                </select>
-              </div>
+        <!-- Dietary Restriction -->
+        <div>
+           <label for="diet">Dietary Restriction:</label>
+           <select id="diet">
+             <option selected>None</option>
+             <option>Vegetarian</option>
+             <option>Vegan</option>
+             <option>Gluten Free</option>
+          </select>
+        </div>
 
-              <hr>
+        <!-- Allergens -->
+        <div id="allergen">
+          <label for="allergen">Allergen </label><br/>
+          <input type="checkbox" name="allergen" value="wheat"/> Wheat <br/>
+          <input type="checkbox" name="allergen" value="eggs"/> Eggs <br/>
+          <input type="checkbox" name="allergen" value="nuts"/> Nuts <br/>
+          <input type="checkbox" name="allergen" value="fish"/> Fish <br/>
+          <input type="checkbox" name="allergen" value="milk"/> Milk <br/>
+          <input type="checkbox" name="allergen" value="peanuts"/> Peanuts <br/>
+          <input type="checkbox" name="allergen" value="shelfish"/> Shellfish <br/>
+          <input type="checkbox" name="allergen" value="soy"/> Soy <br/>
+          <input type="checkbox" name="allergen" value="tree_nuts"/> Tree Nuts <br/>
+        </div>
 
-              <!-- Allergies -->
-              <div id="allergen">
-                <label for="allergen">Allergen </label><br/>
-                <input type="checkbox" name="allergen" value="wheat"/> Wheat <br/>
-                <input type="checkbox" name="allergen" value="eggs"/> Eggs <br/>
-                <input type="checkbox" name="allergen" value="nuts"/> Nuts <br/>
-                <input type="checkbox" name="allergen" value="fish"/> Fish <br/>
-                <input type="checkbox" name="allergen" value="milk"/> Milk <br/>
-                <input type="checkbox" name="allergen" value="peanuts"/> Peanuts<br/>
-                <input type="checkbox" name="allergen" value="shelfish"/> Shellfish <br/>
-                <input type="checkbox" name="allergen" value="soy"/> Soy <br/>
-                <input type="checkbox" name="allergen" value="tree_nuts"/> Tree Nuts
-              </div>
+        <hr>
 
-              <hr>
+        <!-- Search Box -->
+        <div>
+          <label for="searchTerm">Favorite Food Search:</label>
+          <br/>
+          <input type="text" id="searchTerm" placeholder="e.g. Brownies">
+        </div>
 
-              <!-- Search Box -->
-              <div>
-                <label for="searchTerm">Favorite Food Search:</label>
-                <br/>
-                <input type="text" id="searchTerm" placeholder="e.g. Brownies">
-              </div>
-              <br/><br/>
+        <br/><br/>
 
-              <div>
-                <button class="btn btn-primary">Filter results</button>
-              </div>
-            </form>
+        <!-- Filter Button -->
+        <div>
+          <button class="btn btn-primary" id="filter">Filter results</button>
+        </div>
+      </form>
+    </div> <!-- end of sidebar -->
 
-         </div>
-         <div class="col-md-1">
-         </div>
-         <div id="main">
-         </div>
-      </div>
-   </div>
+    <!-- Empty column for space -->
+    <div class="col-md-1"></div>
 
-  <!-- Calendar Functionality -->
+    <!-- Menu Content -->
+    <div class="col-md-8" id="main">
+    </div>
+  </div> <!-- end of row -->
+
+  <!-- JQuery Calendar Functionality -->
   <script>
     $( function() {
       $( "#datepicker" ).datepicker({

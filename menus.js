@@ -1,18 +1,20 @@
 // this will hold the json of menus
 let menus;
-let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
 
+// filter options 
 let searchTerm="";
+let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
 let boxes = {};
-   boxes["Wheat"] = document.querySelector("input[value=wheat]");
-   boxes["Eggs"] = document.querySelector("input[value=eggs]");
-   boxes["Contains Nuts"] = document.querySelector("input[value=nuts");
-   boxes["Fish"] = document.querySelector("input[value=fish]");
-   boxes["Milk"] = document.querySelector("input[value=milk]");
-   boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
-   boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
-   boxes["Soy"] = document.querySelector("input[value=soy]");
-   boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
+
+boxes["Wheat"] = document.querySelector("input[value=wheat]");
+boxes["Eggs"] = document.querySelector("input[value=eggs]");
+boxes["Contains Nuts"] = document.querySelector("input[value=nuts");
+boxes["Fish"] = document.querySelector("input[value=fish]");
+boxes["Milk"] = document.querySelector("input[value=milk]");
+boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
+boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
+boxes["Soy"] = document.querySelector("input[value=soy]");
+boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -43,11 +45,14 @@ function initialize() {
 
    // --------------------------------------------------------------
    // FILTERING WILL HAPPEN HERE
-   let filterBtn = document.querySelector('button');
+   let filterBtn = document.getElementById('filter');
    let date = document.getElementById('datepicker');
+   let sidebarBtn = document.getElementById('collapse');
+
    lastDate = date.value;
 
-   filterBtn.onclick=filter;
+   filterBtn.onclick = filter;
+   sidebarBtn.onclick = collapse;
 
    // SELECT DATE 
    date.onchange = selectDate;
@@ -63,24 +68,8 @@ function initialize() {
          return;
       } else {
          lastDate = date.value;
-
          finalGroup = filterByDate(new Date(lastDate));
 
-         // finalGroup = finalGroup.filter(function(entry) {
-         //    return entry.course != "Parstock";
-         // });
-
-         // meals_list = []
-         //    for (let i=0; i<dining_halls.length; i++) {
-         //       for(let j=0; j<meals.length; j++) {
-         //          group = finalGroup.filter(function(entry) {
-         //             return entry.dining_hall === dining_halls[i] && entry.meal_type === meals[j];
-         //          });
-         //          if (group.length != 0) {
-         //             meals_list.push(group);
-         //          }
-         //       }
-         //    }
          updateDisplay(finalGroup);
       }
    }
@@ -153,6 +142,28 @@ function initialize() {
       }
    }
 
+   //function to open/collpase sidebar of filter options
+   function collapse(e){
+      //prevent page from reloading
+      e.preventDefault();
+
+      let sidebarBtn = document.getElementById('sidebar');
+      let className = sidebarBtn.className;
+
+      switch(className){
+          case "col-md-3 hide":
+            console.log("hide");
+            sidebarBtn.classList.remove("hide");
+            sidebarBtn.classList.add("show");
+            break;
+
+          default: 
+            sidebarBtn.classList.remove("show");
+            sidebarBtn.classList.add("hide");
+            break;
+      }
+   }
+
    // updates display to only include menus from finalGroup
    function updateDisplay(meals_list) {
       //clear the page
@@ -188,10 +199,11 @@ function initialize() {
       }
    }
 
-   /* this function displays menu items for a given meal/location/date */
+   /* this function displays menu items for a given 
+   set of meals in a specific dining hall */
    function showMeal(menu_items) {
 
-      // row + heding 
+      // heding + meal type + columns of meals
       let section = document.createElement('section');
       section.setAttribute('class', "diningHall")
 
@@ -201,7 +213,7 @@ function initialize() {
       heading.innerHTML = menu_items[0].dining_hall;
       section.appendChild(heading);
 
-      // columns
+      // columns of meals
       let breakfast = document.createElement('div');      
       let lunch = document.createElement('div');      
       let dinner = document.createElement('div');
@@ -210,50 +222,43 @@ function initialize() {
       lunch.classList.add('lunch', 'col-md-4'); 
       dinner.classList.add('dinner', 'col-md-4'); 
 
+      // add all meals to section
       section.appendChild(breakfast);
       section.appendChild(lunch);
       section.appendChild(dinner);
 
-
-      // Items
+      // Iterate over meals
       for (let i=0; i < menu_items.length; i++) {
          let dishes = menu_items[i];
 
-         //console.log(i);
-         let col = document.createElement('div');
-         col.setAttribute('class', "col-md-4");
-         section.appendChild(col);
-
-         if (menu_items[i].meal_type === "BREAKFAST") {
-            col.setAttribute('class', "breakfast");
-         } else if (menu_items[i].meal_type === "LUNCH") {
-            col.setAttribute('class', "lunch");
-         } else {
-            col.setAttribute('class', "dinner");
-         }
-
-         // items
+         // list of menu items for a meal
          let items = document.createElement('ul');
 
          // meal heading
          let p = document.createElement('h4');
          items.appendChild(p);
 
-         // iterate over items
+         // iterate over menu items
          for (let j=0; j<dishes.items.length; j++) {
             let show=true;
+
             if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
                show=false;
-            }for(index in dishes.items[j].allergens){
+            }
+
+            for(index in dishes.items[j].allergens){
                let key=dishes.items[j].allergens[index];
                if(allergens.includes(key) && boxes[key].checked){
                   show=false;
                }
-            }if(show){
-               //console.log(dishes.items[j].allergens);  
-               let single_item = document.createElement('li');
-               single_item.innerHTML = dishes.items[j].item_name;
-               items.append(single_item);
+            }
+
+            if(show){
+               if(dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
+                  let single_item = document.createElement('li');
+                  single_item.innerHTML = dishes.items[j].item_name;
+                  items.append(single_item);
+               }
             }
          }
 
