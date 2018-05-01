@@ -173,5 +173,13 @@ nav button:hover {
 
 #calendar {
    margin: 0px 25%;
+}
 
+#location {
+   margin: 10px 25%;
+   background-color: #f7cf9e;
+}
+
+#location:hover {
+   background-color: #e2be91;
 }

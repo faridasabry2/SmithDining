@@ -59,12 +59,14 @@ function initialize() {
    // --------------------------------------------------------------
    // FILTERING WILL HAPPEN HERE
    let filterBtn = document.getElementById('filter');
+   let locationBtn = document.getElementById('location');
    let date = document.getElementById('datepicker');
    let sidebarBtn = document.getElementById('collapse');
 
    lastDate = date.value;
 
    filterBtn.onclick = filter;
+   locationBtn.onclick = getLocation;
    sidebarBtn.onclick = collapse;
 
    // SELECT DATE 
@@ -87,6 +89,36 @@ function initialize() {
       }
    }
 
+   /* getting user location  */
+   function getLocation() {
+      if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+         console.log("Geolocation is not supported by this browser.");
+      }
+   }
+
+   function showPosition(position) {
+      console.log("Latitude: " + position.coords.latitude + 
+        ", Longitude: " + position.coords.longitude);
+   }
+
+   function showError(error) {
+      switch(error.code) {
+         case error.PERMISSION_DENIED:
+            console.log("User denied the request for Geolocation.");
+            break;
+         case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.");
+            break;
+         case error.TIMEOUT:
+            console.log("The request to get user location timed out.");
+            break;
+         case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred.");
+            break;
+      }
+   }
 
    /* 
    function to filter menu items by date. 
