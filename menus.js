@@ -1,7 +1,18 @@
 // this will hold the json of menus
 let menus;
+let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
 
 let searchTerm="";
+let boxes = {};
+   boxes["Wheat"] = document.querySelector("input[value=wheat]");
+   boxes["Eggs"] = document.querySelector("input[value=eggs]");
+   boxes["Contains Nuts"] = document.querySelector("input[value=nuts");
+   boxes["Fish"] = document.querySelector("input[value=fish]");
+   boxes["Milk"] = document.querySelector("input[value=milk]");
+   boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
+   boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
+   boxes["Soy"] = document.querySelector("input[value=soy]");
+   boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -230,8 +241,16 @@ function initialize() {
 
          // iterate over items
          for (let j=0; j<dishes.items.length; j++) {
-            if(dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
-               console.log(searchTerm);  
+            let show=true;
+            if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
+               show=false;
+            }for(index in dishes.items[j].allergens){
+               let key=dishes.items[j].allergens[index];
+               if(allergens.includes(key) && boxes[key].checked){
+                  show=false;
+               }
+            }if(show){
+               //console.log(dishes.items[j].allergens);  
                let single_item = document.createElement('li');
                single_item.innerHTML = dishes.items[j].item_name;
                items.append(single_item);
