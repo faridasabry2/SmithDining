@@ -135,24 +135,7 @@ function initialize() {
 
       //grab search term
       searchTerm = document.getElementById('searchTerm').value.toLowerCase();
-      console.log(searchTerm);
       updateDisplay(finalGroup);
-   }
-
-   // this helper function takes in a list of checkboxes, the attribute they're
-   // related to, and the group they connect to. The list of checkboxes is
-   // iterated over, and boxes that are checked are filtered through the list
-   // of menus.
-   function filterCheckboxes(boxes, attr, group) {
-      for(let i=0; i<boxes.length; i++) {
-         if(boxes[i].checked === true) {
-            for(let j=0; j<menus.length; j++) {
-               if(menus[j][attr] === boxes[i].value) {
-                  group.push(menus[j]);
-               }
-            }
-         }
-      }
    }
 
    //function to open/collpase sidebar of filter options
@@ -183,7 +166,7 @@ function initialize() {
       }
    }
 
-   // updates display to only include menus from finalGroup
+   // updates display to only include menus from finalGroup and ignore filtered items
    function updateDisplay(meals_list) {
       //clear the page
       while (main.firstChild) {
@@ -205,11 +188,13 @@ function initialize() {
          current = meals_list[0].dining_hall;
          group = [];
          for(let i = 0; i < meals_list.length; i++) {
-            console.log(meals_list[i]);
+            //console.log(meals_list[i]);
             if(meals_list[i].dining_hall === current) {
+               //if this menu is also for the same dining hall, add it to group
                group.push(meals_list[i]);
             } else {
-               showMeal(group);
+               //if its for a new dining hall, show the previous group if applicable and start a new group
+               if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
                group = [];
                group.push(meals_list[i]);
             }
@@ -217,7 +202,7 @@ function initialize() {
             current = meals_list[i].dining_hall;
          }
          // fixes bug where cutter/z disappeared - it was last, so its group never hit the else to show meal
-         showMeal(group);
+         if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
       }
    }
 
@@ -252,10 +237,6 @@ function initialize() {
       // Iterate over meals
       for (let i=0; i < menu_items.length; i++) {
          let dishes = menu_items[i];
-
-         if(campArea.value!="All" && !areas[campArea.value].includes(dishes.dining_hall)){
-            continue;
-         }
  
 
          // list of menu items for a meal
@@ -269,10 +250,13 @@ function initialize() {
          for (let j=0; j<dishes.items.length; j++) {
             let show=true;
 
+            //dont any given item that the user has excluded with their filtering
+            //search
             if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
                show=false;
             }
 
+            //allergens
             for(index in dishes.items[j].allergens){
                 let key=dishes.items[j].allergens[index];
                 if(allergens.includes(key) && boxes[key].checked){
@@ -280,16 +264,18 @@ function initialize() {
                 }
             }
 
+            //vegan
             if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
+            //vegetarian
             if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")){
                show=false;
             }
 
+            //if item is valid, append it to items list
             if(show){
-               //console.log(dishes.items[j].allergens);  
                let single_item = document.createElement('li');
                single_item.innerHTML = dishes.items[j].item_name;
                items.append(single_item);
@@ -297,19 +283,32 @@ function initialize() {
          }
 
          if (menu_items[i].meal_type === "BREAKFAST") {
-            breakfast.appendChild(items);
-            breakfast.classList.add('active'); 
-            p.innerHTML = "Breakfast";
+            //only display meals with actual items
+            if(items.childElementCount<=1){
+               section.removeChild(breakfast);
+            }else{  
+               breakfast.appendChild(items);
+               breakfast.classList.add('active'); 
+               p.innerHTML = "Breakfast";
+            }
 
          } else if (menu_items[i].meal_type === "LUNCH") {
+            if(items.childElementCount<=1){
+               section.removeChild(lunch);
+            }else{  
             lunch.appendChild(items);
             lunch.classList.add('active');   
             p.innerHTML = "Lunch";  
+            }
 
          } else {
+            if(items.childElementCount<=1){
+               section.removeChild(dinner);
+            }else{
             dinner.appendChild(items);
             dinner.classList.add('active'); 
-            p.innerHTML = "Dinner";        
+            p.innerHTML = "Dinner"; 
+            }       
          }
 
          // only display section if there are items in that section
