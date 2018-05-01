@@ -1,6 +1,14 @@
 // this will hold the json of menus
 let menus;
 let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
+let areas={};
+areas["Center Campus"] = ["CUTTER\/ZISKIND"];
+areas["Green Street"] = ["CHAPIN","HUBBARD", "TYLER"];
+areas["Upper Elm"] = ["GILLETT","LAMONT"];
+areas["Lower Elm"] = ["CHASE\/DUCKET"];
+areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
+areas["East Quad"] = ["CUSHING\/EMERSON", "KING\/SCALES"];
+
 
 let searchTerm="";
 let boxes = {};
@@ -13,6 +21,9 @@ let boxes = {};
    boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
    boxes["Soy"] = document.querySelector("input[value=soy]");
    boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
+
+let restriction = document.getElementById('diet');
+let campArea = document.getElementById('area');
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -218,6 +229,10 @@ function initialize() {
       // Items
       for (let i=0; i < menu_items.length; i++) {
          let dishes = menu_items[i];
+         console.log(campArea.value);
+         if(campArea.value!="All" && !areas[campArea.value].includes(dishes.dining_hall)){
+            continue;
+         }
 
          //console.log(i);
          let col = document.createElement('div');
@@ -249,6 +264,10 @@ function initialize() {
                if(allergens.includes(key) && boxes[key].checked){
                   show=false;
                }
+            }if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
+               show=false;
+            }if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")){
+               show=false;
             }if(show){
                //console.log(dishes.items[j].allergens);  
                let single_item = document.createElement('li');
