@@ -6,7 +6,6 @@
 }
 
 body {
-   /*font-family: 'Open Sans', sans-serif;*/
    font-family: 'Roboto Slab', serif;
 }
 
@@ -22,59 +21,38 @@ select {
    float:right;
 }
 
-/*button {
-   background-color:#BDBDBD;
-
-   border-radius: 5px;
-   color: #212121;
-}
-button:hover {
-   background-color:#9E9E9E;
-   color: black;
-}*/
 button {
    border: none;
 }
+
 img {
    max-width: 100%;
-   max-heigh: 100%;
+   max-height: 100%;
    padding: .2em;
    border: .1em solid #9E9E9E;
 }
+
 section {
-   margin-bottom: 10%;
+   margin-bottom: 30px;
 }
+
+section:first-child {
+   margin-top: 50px;
+}
+
 p {
    margin: 0;
 }
+
 ul {
   list-style-type: none;
 }
-section{ 
-   margin-bottom: 40px;
-}
 
-.label {
-   font-style: italic;
+/* Meny Styling */
+#calendar {
+   width: 100%;
+   font-size: 20px;
 }
-.houseName {
-   text-decoration: underline;
-   font-size:1.7em;
-   color: black;
-}
-.houseName:hover {
-   color: black;
-}
-
-.header {
-/*   padding-top: 2%;
-   padding-bottom: 2%;*/
-   text-align: left;
-   font-size: 24px;
-   position: relative;
-}
-
-/* Meals */
 
 .heading {
    text-align: center;
@@ -135,7 +113,7 @@ section{
 
 /* ERROR */
 .error {
-   text-align: center;
+   /*text-align: center;*/
 }
 
 /* Active */
@@ -189,8 +167,12 @@ nav button:hover {
    display: none;
 }
 
-/*#main {
-   position: absolute;
-   left: 25%;
-}*/
+#main {
+   margin: 0px 25%;
+}
+
+#calendar {
+   margin: 0px 25%;
+
+}
 

@@ -26,12 +26,11 @@
   <div class="row">
 
     <!-- Sidebar -->
-    <div class="col-md-3 show" id="sidebar">
+    <div class="col-md-3 hide" id="sidebar">
       <form >
         <!-- Calendar Date -->
-        <p>Date: <input type="text" id="datepicker"></p>
-
-        <hr>
+        <!-- <p>Date: <input type="text" id="datepicker"></p> -->
+        <!-- <hr> -->
 
         <!-- Are of campus dropdown -->
         <div>
@@ -94,7 +93,11 @@
     <div class="col-md-1"></div>
 
     <!-- Menu Content -->
-    <div class="col-md-8" id="main">
+    <div class="col-md-8">
+      <!-- Calendar Date -->
+      <p id="calendar">Date: <input type="text" id="datepicker"></p>
+
+      <div id="main"></div>
     </div>
   </div> <!-- end of row -->
 

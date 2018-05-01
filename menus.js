@@ -3,6 +3,16 @@ let menus;
 
 // filter options 
 let searchTerm="";
+
+let areas={};
+
+areas["Center Campus"] = ["CUTTER\/ZISKIND"];
+areas["Green Street"] = ["CHAPIN","HUBBARD", "TYLER"];
+areas["Upper Elm Street"] = ["GILLETT","LAMONT"];
+areas["Lower Elm Street"] = ["CHASE\/DUCKET"];
+areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
+areas["East Quad"] = ["CUSHING\/EMERSON", "KING\/SCALES"];
+
 let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
 let boxes = {};
 
@@ -15,6 +25,9 @@ boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
 boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
 boxes["Soy"] = document.querySelector("input[value=soy]");
 boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
+
+let restriction = document.getElementById('diet');
+let campArea = document.getElementById('area');
 
 // use fetch to retrieve it, and report any errors that occur in the fetch operation
 // once the products have been successfully loaded and formatted as a JSON object
@@ -147,6 +160,8 @@ function initialize() {
       //prevent page from reloading
       e.preventDefault();
 
+      let main = document.getElementById('main');
+      let calendar = document.getElementById('calendar');
       let sidebarBtn = document.getElementById('sidebar');
       let className = sidebarBtn.className;
 
@@ -155,11 +170,15 @@ function initialize() {
             console.log("hide");
             sidebarBtn.classList.remove("hide");
             sidebarBtn.classList.add("show");
+            main.style.margin = "0px 0px";
+            calendar.style.margin = "0px 0px";
             break;
 
           default: 
             sidebarBtn.classList.remove("show");
             sidebarBtn.classList.add("hide");
+            main.style.margin = "0px 25%";
+            calendar.style.margin = "0px 25%";
             break;
       }
    }
@@ -231,6 +250,11 @@ function initialize() {
       for (let i=0; i < menu_items.length; i++) {
          let dishes = menu_items[i];
 
+         if(campArea.value!="All" && !areas[campArea.value].includes(dishes.dining_hall)){
+            continue;
+         }
+ 
+
          // list of menu items for a meal
          let items = document.createElement('ul');
 
@@ -247,18 +271,25 @@ function initialize() {
             }
 
             for(index in dishes.items[j].allergens){
-               let key=dishes.items[j].allergens[index];
-               if(allergens.includes(key) && boxes[key].checked){
-                  show=false;
-               }
+                let key=dishes.items[j].allergens[index];
+                if(allergens.includes(key) && boxes[key].checked){
+                   show=false;
+                }
+            }
+
+            if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
+               show=false;
+            }
+
+            if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")){
+               show=false;
             }
 
             if(show){
-               if(dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
-                  let single_item = document.createElement('li');
-                  single_item.innerHTML = dishes.items[j].item_name;
-                  items.append(single_item);
-               }
+               //console.log(dishes.items[j].allergens);  
+               let single_item = document.createElement('li');
+               single_item.innerHTML = dishes.items[j].item_name;
+               items.append(single_item);
             }
          }
 
