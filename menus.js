@@ -6,8 +6,8 @@ let searchTerm="";
 
 let areas={};
 
-areas["Center Campus"] = ["CUTTER\/ZISKIND"];
-areas["Green Street"] = ["CHAPIN","HUBBARD", "TYLER"];
+areas["Center Campus"] = ["ZISKIND\/CUTTER","CHAPIN"];
+areas["Green Street"] = ["HUBBARD", "TYLER"];
 areas["Upper Elm Street"] = ["GILLETT","LAMONT"];
 areas["Lower Elm Street"] = ["CHASE\/DUCKET"];
 areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
