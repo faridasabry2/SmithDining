@@ -205,6 +205,7 @@ function initialize() {
          current = meals_list[0].dining_hall;
          group = [];
          for(let i = 0; i < meals_list.length; i++) {
+            console.log(meals_list[i]);
             if(meals_list[i].dining_hall === current) {
                group.push(meals_list[i]);
             } else {
@@ -215,6 +216,8 @@ function initialize() {
 
             current = meals_list[i].dining_hall;
          }
+         // fixes bug where cutter/z disappeared - it was last, so its group never hit the else to show meal
+         showMeal(group);
       }
    }
 
@@ -309,12 +312,11 @@ function initialize() {
             p.innerHTML = "Dinner";        
          }
 
+         // only display section if there are items in that section
          if (items.length != 0) {
             main.appendChild(section);
          }
 
-        console.log(items);
       }
-        // main.appendChild(section);
    }
 }
