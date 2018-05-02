@@ -317,7 +317,7 @@ function initialize() {
             }
 
             //vegetarian
-            if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")){
+            if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")  && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
