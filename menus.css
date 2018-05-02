@@ -58,7 +58,7 @@ ul {
    text-align: center;
    margin-bottom: 20px;
    font-size: 20px;
-   text-transform: lowercase;
+   /*text-transform: lowercase;*/
    background-color: #f7cf9e;
 }
 

@@ -205,7 +205,6 @@ function initialize() {
          current = meals_list[0].dining_hall;
          group = [];
          for(let i = 0; i < meals_list.length; i++) {
-            console.log(meals_list[i]);
             if(meals_list[i].dining_hall === current) {
                group.push(meals_list[i]);
             } else {
