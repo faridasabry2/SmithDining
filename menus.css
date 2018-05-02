@@ -81,8 +81,8 @@ ul {
 }
 
 .diningHall li:hover{
-   padding: 0px 5px;
-   background: #eee;
+   /*padding: 0px 5px;*/
+   background: #FFF3E4;
 }
 
 /*.diningHall li:nth-child(odd){
@@ -133,8 +133,23 @@ ul {
    size: 5px;
 }*/
 
+
+.fa-bars {
+   background-color: #003e51;
+   color: white;
+}
+
+.navbar-light .navbar-brand {
+   color: white;
+}
+
+.navbar-light:hover .navbar-brand:hover {
+   color:white;
+}
+
 nav {
    margin-bottom: 50px;
+   color: white;
 }
 
 nav button {
@@ -173,5 +188,21 @@ nav button:hover {
 
 #calendar {
    margin: 0px 25%;
+}
 
+#location {
+   margin: 10px 25%;
+   background-color: #f7cf9e;
+}
+
+#location:hover {
+   background-color: #e2be91;
+}
+
+.hide_icons {
+   display:none;
+}
+
+.allergenIcon {
+   border: 0px;
 }

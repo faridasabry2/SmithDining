@@ -13,9 +13,9 @@
 </head>
 <body>
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-light bg-light">
+  <nav class="navbar navbar-light" style = "background-color: #003e51">
     <div class="navbar-brand icon">
-      <button class="fa fa-bars" id="collapse" onClick="hide()"></button>Smith Dining Menu
+      <button class="fa fa-bars" id="collapse" onClick="hide()"></button>Smith College Dining Menu
     </div>
   </nav>
 
@@ -56,15 +56,14 @@
         <!-- Allergens -->
         <div id="allergen">
           <label for="allergen">Allergen </label><br/>
-          <input type="checkbox" name="allergen" value="wheat"/> Wheat <br/>
-          <input type="checkbox" name="allergen" value="eggs"/> Eggs <br/>
-          <input type="checkbox" name="allergen" value="nuts"/> Nuts <br/>
-          <input type="checkbox" name="allergen" value="fish"/> Fish <br/>
-          <input type="checkbox" name="allergen" value="milk"/> Milk <br/>
-          <input type="checkbox" name="allergen" value="peanuts"/> Peanuts <br/>
-          <input type="checkbox" name="allergen" value="shelfish"/> Shellfish <br/>
-          <input type="checkbox" name="allergen" value="soy"/> Soy <br/>
-          <input type="checkbox" name="allergen" value="tree_nuts"/> Tree Nuts <br/>
+          <input type="checkbox" name="allergen" value="wheat"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Gluten.jpg"> Wheat <br/>
+          <input type="checkbox" name="allergen" value="eggs"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Eggs.jpg"> Eggs <br/>
+          <input type="checkbox" name="allergen" value="nuts"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Peanuts.jpg"> Nuts <br/>
+          <input type="checkbox" name="allergen" value="fish"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Fish.jpg"> Fish <br/>
+          <input type="checkbox" name="allergen" value="milk"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Dairy.jpg"> Milk <br/>
+          <input type="checkbox" name="allergen" value="shellfish"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Shellfish.jpg"> Shellfish <br/>
+          <input type="checkbox" name="allergen" value="soy"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Soy.jpg"> Soy <br/>
+          <input type="checkbox" name="allergen" value="tree_nuts"/> <img class="allergenIcon" src="http://cbweb.smith.edu/NetNutrition/Images/traits/Treenuts.jpg"> Tree Nuts <br/>
         </div>
 
         <hr>
@@ -92,6 +91,7 @@
     <div class="col-md-8">
       <!-- Calendar Date -->
       <p id="calendar">Date: <input type="text" id="datepicker"></p>
+      <button class="btn btn-warning" id="location" onclick="getLocation()">Sort By Your Location</button>
 
       <div id="main"></div>
     </div>
@@ -105,6 +105,8 @@
         minDate: 0 
       }).datepicker("setDate", new Date());
     } );
+
+
   </script>
 
   <!-- Customer JS for menu showing/filtering -->

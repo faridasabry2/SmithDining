@@ -26,6 +26,21 @@ boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
 boxes["Soy"] = document.querySelector("input[value=soy]");
 boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
 
+
+let allergen_icons = {};
+allergen_icons["Wheat"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Gluten.jpg";
+allergen_icons["Eggs"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Eggs.jpg";
+allergen_icons["Contains Nuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Peanuts.jpg";
+allergen_icons["Fish"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Fish.jpg";
+allergen_icons["Milk"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Dairy.jpg";
+allergen_icons["Peanuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Peanuts.jpg";
+allergen_icons["Tree Nuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Treenuts.jpg";
+allergen_icons["Shellfish"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Shellfish.jpg";
+allergen_icons["Soy"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Soy.jpg";
+allergen_icons["Vegetarian"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegetarian.jpg";
+allergen_icons["Vegan"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegan.jpg";
+
+
 let restriction = document.getElementById('diet');
 let campArea = document.getElementById('area');
 
@@ -59,12 +74,14 @@ function initialize() {
    // --------------------------------------------------------------
    // FILTERING WILL HAPPEN HERE
    let filterBtn = document.getElementById('filter');
+   let locationBtn = document.getElementById('location');
    let date = document.getElementById('datepicker');
    let sidebarBtn = document.getElementById('collapse');
 
    lastDate = date.value;
 
    filterBtn.onclick = filter;
+   locationBtn.onclick = getLocation;
    sidebarBtn.onclick = collapse;
 
    // SELECT DATE 
@@ -87,6 +104,36 @@ function initialize() {
       }
    }
 
+   /* getting user location  */
+   function getLocation() {
+      if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+         console.log("Geolocation is not supported by this browser.");
+      }
+   }
+
+   function showPosition(position) {
+      console.log("Latitude: " + position.coords.latitude + 
+        ", Longitude: " + position.coords.longitude);
+   }
+
+   function showError(error) {
+      switch(error.code) {
+         case error.PERMISSION_DENIED:
+            console.log("User denied the request for Geolocation.");
+            break;
+         case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.");
+            break;
+         case error.TIMEOUT:
+            console.log("The request to get user location timed out.");
+            break;
+         case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred.");
+            break;
+      }
+   }
 
    /* 
    function to filter menu items by date. 
@@ -135,24 +182,7 @@ function initialize() {
 
       //grab search term
       searchTerm = document.getElementById('searchTerm').value.toLowerCase();
-      console.log(searchTerm);
       updateDisplay(finalGroup);
-   }
-
-   // this helper function takes in a list of checkboxes, the attribute they're
-   // related to, and the group they connect to. The list of checkboxes is
-   // iterated over, and boxes that are checked are filtered through the list
-   // of menus.
-   function filterCheckboxes(boxes, attr, group) {
-      for(let i=0; i<boxes.length; i++) {
-         if(boxes[i].checked === true) {
-            for(let j=0; j<menus.length; j++) {
-               if(menus[j][attr] === boxes[i].value) {
-                  group.push(menus[j]);
-               }
-            }
-         }
-      }
    }
 
    //function to open/collpase sidebar of filter options
@@ -183,7 +213,7 @@ function initialize() {
       }
    }
 
-   // updates display to only include menus from finalGroup
+   // updates display to only include menus from finalGroup and ignore filtered items
    function updateDisplay(meals_list) {
       //clear the page
       while (main.firstChild) {
@@ -205,10 +235,13 @@ function initialize() {
          current = meals_list[0].dining_hall;
          group = [];
          for(let i = 0; i < meals_list.length; i++) {
+
             if(meals_list[i].dining_hall === current) {
+               //if this menu is also for the same dining hall, add it to group
                group.push(meals_list[i]);
             } else {
-               showMeal(group);
+               //if its for a new dining hall, show the previous group if applicable and start a new group
+               if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
                group = [];
                group.push(meals_list[i]);
             }
@@ -216,7 +249,7 @@ function initialize() {
             current = meals_list[i].dining_hall;
          }
          // fixes bug where cutter/z disappeared - it was last, so its group never hit the else to show meal
-         showMeal(group);
+         if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
       }
    }
 
@@ -251,10 +284,6 @@ function initialize() {
       // Iterate over meals
       for (let i=0; i < menu_items.length; i++) {
          let dishes = menu_items[i];
-
-         if(campArea.value!="All" && !areas[campArea.value].includes(dishes.dining_hall)){
-            continue;
-         }
  
 
          // list of menu items for a meal
@@ -268,10 +297,13 @@ function initialize() {
          for (let j=0; j<dishes.items.length; j++) {
             let show=true;
 
+            //dont any given item that the user has excluded with their filtering
+            //search
             if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
                show=false;
             }
 
+            //allergens
             for(index in dishes.items[j].allergens){
                 let key=dishes.items[j].allergens[index];
                 if(allergens.includes(key) && boxes[key].checked){
@@ -279,36 +311,68 @@ function initialize() {
                 }
             }
 
+            //vegan
             if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
+            //vegetarian
             if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")){
                show=false;
             }
 
+            //if item is valid, append it to items list
             if(show){
-               //console.log(dishes.items[j].allergens);  
                let single_item = document.createElement('li');
                single_item.innerHTML = dishes.items[j].item_name;
                items.append(single_item);
+
+               let allergens_list = document.createElement('ul');
+               allergens_list.classList.add('hide_icons');
+               // allergens_list.addClass("happy");
+
+               for (allergen in dishes.items[j].allergens) {
+                  single_allergen = document.createElement('img');
+                  single_allergen.src = allergen_icons[dishes.items[j].allergens[allergen]];
+                  single_allergen.alt = dishes.items[j].allergens[allergen];
+                  single_allergen.classList.add("allergenIcon");
+                  allergens_list.appendChild(single_allergen);
+
+                  if (dishes.items[j].allergens[allergen] === "Nuts") {
+                     console.log(dishes.items[j]);
+                  }
+               }
+               single_item.appendChild(allergens_list);
             }
          }
 
          if (menu_items[i].meal_type === "BREAKFAST") {
-            breakfast.appendChild(items);
-            breakfast.classList.add('active'); 
-            p.innerHTML = "Breakfast";
+            //only display meals with actual items
+            if(items.childElementCount<=1){
+               section.removeChild(breakfast);
+            }else{  
+               breakfast.appendChild(items);
+               breakfast.classList.add('active'); 
+               p.innerHTML = "Breakfast";
+            }
 
          } else if (menu_items[i].meal_type === "LUNCH") {
+            if(items.childElementCount<=1){
+               section.removeChild(lunch);
+            }else{  
             lunch.appendChild(items);
             lunch.classList.add('active');   
             p.innerHTML = "Lunch";  
+            }
 
          } else {
+            if(items.childElementCount<=1){
+               section.removeChild(dinner);
+            }else{
             dinner.appendChild(items);
             dinner.classList.add('active'); 
-            p.innerHTML = "Dinner";        
+            p.innerHTML = "Dinner"; 
+            }       
          }
 
          // only display section if there are items in that section
@@ -318,4 +382,15 @@ function initialize() {
 
       }
    }
+
 }
+
+$(document).on("mouseenter", "li", function() {
+    // hover starts code here
+    this.childNodes[1].classList.remove('hide_icons');
+});
+
+$(document).on("mouseout", "li", function() {
+    // hover starts code here
+    this.childNodes[1].classList.add('hide_icons');
+});
