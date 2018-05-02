@@ -280,6 +280,7 @@ function initialize() {
       section.appendChild(breakfast);
       section.appendChild(lunch);
       section.appendChild(dinner);
+      let empty=true;
 
       // Iterate over meals
       for (let i=0; i < menu_items.length; i++) {
@@ -347,40 +348,36 @@ function initialize() {
          }
 
          if (menu_items[i].meal_type === "BREAKFAST") {
-            //only display meals with actual items
-            if(items.childElementCount<=1){
-               section.removeChild(breakfast);
-            }else{  
                breakfast.appendChild(items);
                breakfast.classList.add('active'); 
-               p.innerHTML = "Breakfast";
-            }
+               if(items.childElementCount>1) {
+                  p.innerHTML = "Breakfast";
+                  console.log("breakfast");
+                  emtpy=false;
+               }
 
          } else if (menu_items[i].meal_type === "LUNCH") {
-            if(items.childElementCount<=1){
-               section.removeChild(lunch);
-            }else{  
             lunch.appendChild(items);
             lunch.classList.add('active');   
-            p.innerHTML = "Lunch";  
-            }
+            if(items.childElementCount>1) {
+               p.innerHTML = "Lunch";
+               console.log("lunch");
+               empty=false;
+            }  
 
          } else {
-            if(items.childElementCount<=1){
-               section.removeChild(dinner);
-            }else{
             dinner.appendChild(items);
             dinner.classList.add('active'); 
-            p.innerHTML = "Dinner"; 
-            }       
-         }
-
-         // only display section if there are items in that section
-         if (items.length != 0) {
-            main.appendChild(section);
+            if(items.childElementCount>1) {
+               p.innerHTML = "Dinner"; 
+               console.log("dinner");
+               empty=false;
+            }
          }
 
       }
+
+            if(!empty) main.appendChild(section);
    }
 
 }
