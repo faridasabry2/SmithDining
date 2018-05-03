@@ -193,6 +193,7 @@ function initialize() {
       let main = document.getElementById('main');
       let calendar = document.getElementById('calendar');
       let sidebarBtn = document.getElementById('sidebar');
+      let location = document.getElementById('location');
       let className = sidebarBtn.className;
 
       switch(className){
@@ -202,13 +203,16 @@ function initialize() {
             sidebarBtn.classList.add("show");
             main.style.margin = "0px 0px";
             calendar.style.margin = "0px 0px";
+            location.style.margin = "10px 5px 0px 0%";
+
             break;
 
           default: 
             sidebarBtn.classList.remove("show");
             sidebarBtn.classList.add("hide");
-            main.style.margin = "0px 25%";
-            calendar.style.margin = "0px 25%";
+            main.style.margin = "0px 30%";
+            calendar.style.margin = "0px 30%";
+            location.style.margin = "10px 5px 0px 30%";
             break;
       }
    }
