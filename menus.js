@@ -394,3 +394,4 @@ $(document).on("mouseout", "li", function() {
     // hover starts code here
     this.childNodes[1].classList.add('hide_icons');
 });
+
