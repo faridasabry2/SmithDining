@@ -206,3 +206,7 @@ nav button:hover {
 .allergenIcon {
    border: 0px;
 }
+
+.error {
+   margin-top: 20px;
+}
