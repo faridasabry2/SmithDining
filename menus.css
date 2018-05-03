@@ -183,15 +183,15 @@ nav button:hover {
 }
 
 #main {
-   margin: 0px 25%;
+   margin: 0px 5%;
 }
 
 #calendar {
-   margin: 0px 25%;
+   margin: 0px 5%;
 }
 
 #location {
-   margin: 10px 25%;
+   margin: 10px 5px 0px 5%;
    background-color: #f7cf9e;
 }
 
@@ -205,4 +205,8 @@ nav button:hover {
 
 .allergenIcon {
    border: 0px;
+}
+
+.error {
+   margin-top: 20px;
 }

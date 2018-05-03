@@ -193,6 +193,7 @@ function initialize() {
       let main = document.getElementById('main');
       let calendar = document.getElementById('calendar');
       let sidebarBtn = document.getElementById('sidebar');
+      let location = document.getElementById('location');
       let className = sidebarBtn.className;
 
       switch(className){
@@ -202,13 +203,16 @@ function initialize() {
             sidebarBtn.classList.add("show");
             main.style.margin = "0px 0px";
             calendar.style.margin = "0px 0px";
+            location.style.margin = "10px 5px 0px 0%";
+
             break;
 
           default: 
             sidebarBtn.classList.remove("show");
             sidebarBtn.classList.add("hide");
-            main.style.margin = "0px 25%";
-            calendar.style.margin = "0px 25%";
+            main.style.margin = "0px 30%";
+            calendar.style.margin = "0px 30%";
+            location.style.margin = "10px 5px 0px 30%";
             break;
       }
    }
@@ -251,6 +255,21 @@ function initialize() {
          // fixes bug where cutter/z disappeared - it was last, so its group never hit the else to show meal
          if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
       }
+
+      // if no results are displayed - put up a no results message
+      // loop through all children of main: if all are empty, show empty message
+      let emptyResult = true;
+      for (let i=0; i<main.childNodes.length; i++) {
+         if (main.childNodes[i].hasChildNodes()) {
+            emptyResult = false;
+         }
+      }
+      if (emptyResult) {
+         let empty = document.createElement('h5');
+         empty.setAttribute('class', 'error');
+         empty.innerHTML = "No results to display.";
+         main.append(empty);
+      }
    }
 
    /* this function displays menu items for a given 
@@ -280,6 +299,7 @@ function initialize() {
       section.appendChild(breakfast);
       section.appendChild(lunch);
       section.appendChild(dinner);
+      let empty=true;
 
       // Iterate over meals
       for (let i=0; i < menu_items.length; i++) {
@@ -317,7 +337,7 @@ function initialize() {
             }
 
             //vegetarian
-            if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian")  && !dishes.items[j].allergens.includes("Vegan")){
+            if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian") && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
@@ -347,43 +367,41 @@ function initialize() {
          }
 
          if (menu_items[i].meal_type === "BREAKFAST") {
-            //only display meals with actual items
-            if(items.childElementCount<=1){
-               section.removeChild(breakfast);
-            }else{  
                breakfast.appendChild(items);
                breakfast.classList.add('active'); 
-               p.innerHTML = "Breakfast";
-            }
+               if(items.childElementCount>1) {
+                  p.innerHTML = "Breakfast";
+                  console.log("breakfast");
+                  emtpy=false;
+               }
 
          } else if (menu_items[i].meal_type === "LUNCH") {
-            if(items.childElementCount<=1){
-               section.removeChild(lunch);
-            }else{  
             lunch.appendChild(items);
             lunch.classList.add('active');   
-            p.innerHTML = "Lunch";  
-            }
+            if(items.childElementCount>1) {
+               p.innerHTML = "Lunch";
+               console.log("lunch");
+               empty=false;
+            }  
 
          } else {
-            if(items.childElementCount<=1){
-               section.removeChild(dinner);
-            }else{
             dinner.appendChild(items);
             dinner.classList.add('active'); 
-            p.innerHTML = "Dinner"; 
-            }       
-         }
-
-         // only display section if there are items in that section
-         if (items.length != 0) {
-            main.appendChild(section);
+            if(items.childElementCount>1) {
+               p.innerHTML = "Dinner"; 
+               console.log("dinner");
+               empty=false;
+            }
          }
 
       }
-   }
+
+            if(!empty) main.appendChild(section);
+   }      
 
 }
+
+
 
 $(document).on("mouseenter", "li", function() {
     // hover starts code here
