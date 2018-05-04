@@ -9,11 +9,11 @@ let areas={};
 areas["Center Campus"] = ["ZISKIND\/CUTTER","CHAPIN"];
 areas["Green Street"] = ["HUBBARD", "TYLER"];
 areas["Upper Elm Street"] = ["GILLETT","LAMONT"];
-areas["Lower Elm Street"] = ["CHASE\/DUCKET"];
+areas["Lower Elm Street"] = ["CHASE\/DUCKETT"];
 areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
 areas["East Quad"] = ["CUSHING\/EMERSON", "KING\/SCALES"];
 
-let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
+let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts", "Corn", "Sesame"];
 let boxes = {};
 
 boxes["Wheat"] = document.querySelector("input[value=wheat]");
@@ -25,6 +25,8 @@ boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
 boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
 boxes["Soy"] = document.querySelector("input[value=soy]");
 boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
+boxes["Corn"] = document.querySelector("input[value=corn]");
+boxes["Sesame"] = document.querySelector("input[value=sesame]");
 
 
 let allergen_icons = {};
@@ -37,8 +39,23 @@ allergen_icons["Peanuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/P
 allergen_icons["Tree Nuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Treenuts.jpg";
 allergen_icons["Shellfish"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Shellfish.jpg";
 allergen_icons["Soy"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Soy.jpg";
+allergen_icons["Corn"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Corn.jpg"
+allergen_icons["Sesame"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Sesame.jpg"
 allergen_icons["Vegetarian"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegetarian.jpg";
 allergen_icons["Vegan"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegan.jpg";
+
+let dining_coords = {};
+dining_coords["CHAPIN"] = [42.319082, -72.639259];
+dining_coords["ZISKIND\/CUTTER"] = [42.320616, -72.638274];
+dining_coords["HUBBARD"] = [42.317177, -72.636951];
+dining_coords["TYLER"] = [42.316652, -72.639660];
+dining_coords["GILLETT"] = [42.319801, -72.636877];
+dining_coords["LAMONT"] = [42.320444, -72.635781];
+dining_coords["CHASE\/DUCKETT"] = [42.319407, -72.636367];
+dining_coords["COMSTOCK\/WILDER"] = [42.320034, -72.644433];
+dining_coords["MORROW\/WILSON"] = [42.320919, -72.644303];
+dining_coords["CUSHING\/EMERSON"] = [42.320131, -72.643467];
+dining_coords["KING\/SCALES"] = [42.321152, -72.642898];
 
 
 let restriction = document.getElementById('diet');
@@ -108,6 +125,7 @@ function initialize() {
    function getLocation() {
       if (navigator.geolocation) {
          navigator.geolocation.getCurrentPosition(showPosition, showError);
+         console.log("boo");
       } else {
          console.log("Geolocation is not supported by this browser.");
       }
@@ -116,6 +134,27 @@ function initialize() {
    function showPosition(position) {
       console.log("Latitude: " + position.coords.latitude + 
         ", Longitude: " + position.coords.longitude);
+      for (let i=0; i<finalGroup.length; i++) {
+         // console.log(finalGroup[i]);
+         if (finalGroup[i].dining_hall in dining_coords) {
+            lat = dining_coords[finalGroup[i].dining_hall][0];
+            long = dining_coords[finalGroup[i].dining_hall][1];
+            console.log(finalGroup[i].dining_hall, lat, long);
+            dis = distance(position.coords.latitude, position.coords.longitude, lat, long);
+            finalGroup[i].distance = dis;
+         }
+         else {
+            // don't have coords for this - give it default distance of 100
+            finalGroup[i].distance = 100;
+            console.log(finalGroup[i]);
+         }
+      }
+
+      finalGroup.sort(function(a, b) {
+         return a.distance > b.distance;
+      });
+      console.log(finalGroup);
+      updateDisplay(finalGroup);
    }
 
    function showError(error) {
@@ -134,6 +173,35 @@ function initialize() {
             break;
       }
    }
+
+   // this code taken from stackoverflow - calculates distance between two geolocations
+   // https://stackoverflow.com/questions/13840516/how-to-find-my-distance-to-a-known-location-in-javascript
+   function distance(lon1, lat1, lon2, lat2) {
+     var R = 6371; // Radius of the earth in km
+     var dLat = (lat2-lat1).toRad();  // Javascript functions in radians
+     var dLon = (lon2-lon1).toRad(); 
+     var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+             Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
+             Math.sin(dLon/2) * Math.sin(dLon/2); 
+     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+     var d = R * c; // Distance in km
+     console.log(d);
+     return d;
+   }
+
+   /** Converts numeric degrees to radians */
+   if (typeof(Number.prototype.toRad) === "undefined") {
+     Number.prototype.toRad = function() {
+       return this * Math.PI / 180;
+     }
+   }
+
+   // window.navigator.geolocation.getCurrentPosition(function(pos) {
+   //   console.log(pos); 
+   //   console.log(
+   //     distance(pos.coords.longitude, pos.coords.latitude, 42.37, 71.03)
+   //   ); 
+   // });
 
 
    /* 
@@ -359,9 +427,6 @@ function initialize() {
                   single_allergen.classList.add("allergenIcon");
                   allergens_list.appendChild(single_allergen);
 
-                  if (dishes.items[j].allergens[allergen] === "Nuts") {
-                     console.log(dishes.items[j]);
-                  }
                }
                single_item.appendChild(allergens_list);
             }
@@ -372,7 +437,6 @@ function initialize() {
                breakfast.classList.add('active'); 
                if(items.childElementCount>1) {
                   p.innerHTML = "Breakfast";
-                  console.log("breakfast");
                   emtpy=false;
                }
 
@@ -381,7 +445,6 @@ function initialize() {
             lunch.classList.add('active');   
             if(items.childElementCount>1) {
                p.innerHTML = "Lunch";
-               console.log("lunch");
                empty=false;
             }  
 
@@ -390,7 +453,6 @@ function initialize() {
             dinner.classList.add('active'); 
             if(items.childElementCount>1) {
                p.innerHTML = "Dinner"; 
-               console.log("dinner");
                empty=false;
             }
          }
@@ -403,12 +465,13 @@ function initialize() {
 }
 
 
-
+// on hover - remove hidden class for icons
 $(document).on("mouseenter", "li", function() {
     // hover starts code here
     this.childNodes[1].classList.remove('hide_icons');
 });
 
+// on mouseout - add hidden class for icons
 $(document).on("mouseout", "li", function() {
     // hover starts code here
     this.childNodes[1].classList.add('hide_icons');
