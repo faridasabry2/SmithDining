@@ -4,6 +4,7 @@ let menus;
 // filter options 
 let searchTerm="";
 
+// object of areas of campus for filtering
 let areas={};
 
 areas["Center Campus"] = ["ZISKIND\/CUTTER","CHAPIN"];
@@ -13,6 +14,7 @@ areas["Lower Elm Street"] = ["CHASE\/DUCKETT"];
 areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
 areas["East Quad"] = ["CUSHING\/EMERSON", "KING\/SCALES"];
 
+// objects for filtering by allergens (checkboxes)
 let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts", "Corn", "Sesame"];
 let boxes = {};
 
@@ -28,7 +30,7 @@ boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
 boxes["Corn"] = document.querySelector("input[value=corn]");
 boxes["Sesame"] = document.querySelector("input[value=sesame]");
 
-
+// object for displaying allergen icons on hover
 let allergen_icons = {};
 allergen_icons["Wheat"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Gluten.jpg";
 allergen_icons["Eggs"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Eggs.jpg";
@@ -44,6 +46,7 @@ allergen_icons["Sesame"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Se
 allergen_icons["Vegetarian"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegetarian.jpg";
 allergen_icons["Vegan"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegan.jpg";
 
+// object of dining hall latitude/longitude for sorting by location
 let dining_coords = {};
 dining_coords["CHAPIN"] = [42.319082, -72.639259];
 dining_coords["ZISKIND\/CUTTER"] = [42.320616, -72.638274];
@@ -95,8 +98,8 @@ function initialize() {
    let date = document.getElementById('datepicker');
    let sidebarBtn = document.getElementById('collapse');
 
+   // define buttons
    lastDate = date.value;
-
    filterBtn.onclick = filter;
    locationBtn.onclick = getLocation;
    sidebarBtn.onclick = collapse;
@@ -131,11 +134,17 @@ function initialize() {
       }
    }
 
+   /* function to do something with user location 
+   ideally: go through every dining hall, calculate distance, 
+   sort final group by distance 
+
+   Doesn't currently work because it splits dining halls up? i.e. Hubbard gets one section for 
+   dinner, and another for breakfast and lunch. Unknown bug. */ 
    function showPosition(position) {
       console.log("Latitude: " + position.coords.latitude + 
         ", Longitude: " + position.coords.longitude);
       for (let i=0; i<finalGroup.length; i++) {
-         // console.log(finalGroup[i]);
+         // if we know the coordinates: calculate distance
          if (finalGroup[i].dining_hall in dining_coords) {
             lat = dining_coords[finalGroup[i].dining_hall][0];
             long = dining_coords[finalGroup[i].dining_hall][1];
@@ -150,13 +159,14 @@ function initialize() {
          }
       }
 
+      // sort final group by distance
       finalGroup.sort(function(a, b) {
-         return a.distance > b.distance;
+         return a.distance >= b.distance;
       });
-      console.log(finalGroup);
       updateDisplay(finalGroup);
    }
 
+   // error function for geolocation (most likely user rejected permissions)
    function showError(error) {
       switch(error.code) {
          case error.PERMISSION_DENIED:
@@ -195,13 +205,6 @@ function initialize() {
        return this * Math.PI / 180;
      }
    }
-
-   // window.navigator.geolocation.getCurrentPosition(function(pos) {
-   //   console.log(pos); 
-   //   console.log(
-   //     distance(pos.coords.longitude, pos.coords.latitude, 42.37, 71.03)
-   //   ); 
-   // });
 
 
    /* 
@@ -244,6 +247,7 @@ function initialize() {
       return results;
    }
 
+   /* function is triggered when user hits the filter button */
    function filter(e){
       //prevent page from reloading
       e.preventDefault();
@@ -327,6 +331,7 @@ function initialize() {
 
       // if no results are displayed - put up a no results message
       // loop through all children of main: if all are empty, show empty message
+      // have to do this twice because dynamic filtering is happening in showMeal
       let emptyResult = true;
       for (let i=0; i<main.childNodes.length; i++) {
          if (main.childNodes[i].hasChildNodes()) {
@@ -342,7 +347,8 @@ function initialize() {
    }
 
    /* this function displays menu items for a given 
-   set of meals in a specific dining hall */
+   set of meals in a specific dining hall.
+   Also filters based on user specifications. */
    function showMeal(menu_items) {
 
       // heding + meal type + columns of meals
@@ -382,17 +388,17 @@ function initialize() {
          let p = document.createElement('h4');
          items.appendChild(p);
 
-         // iterate over menu items
+         // iterate over individual menu items
          for (let j=0; j<dishes.items.length; j++) {
             let show=true;
 
-            //dont any given item that the user has excluded with their filtering
+            //dont show any given item that the user has excluded with their filtering
             //search
             if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
                show=false;
             }
 
-            //allergens
+            //filter by allergens
             for(index in dishes.items[j].allergens){
                 let key=dishes.items[j].allergens[index];
                 if(allergens.includes(key) && boxes[key].checked){
@@ -400,12 +406,12 @@ function initialize() {
                 }
             }
 
-            //vegan
+            // filter by vegan
             if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
-            //vegetarian
+            //filter by vegetarian (also showing vegan items)
             if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian") && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
@@ -416,10 +422,12 @@ function initialize() {
                single_item.innerHTML = dishes.items[j].item_name;
                items.append(single_item);
 
+               // adding the allergens icons for a single item
                let allergens_list = document.createElement('ul');
                allergens_list.classList.add('hide_icons');
-               // allergens_list.addClass("happy");
 
+               // iterate through all allergens and add an image for it
+               // by default, do not display images (only show on hover)
                for (allergen in dishes.items[j].allergens) {
                   single_allergen = document.createElement('img');
                   single_allergen.src = allergen_icons[dishes.items[j].allergens[allergen]];
@@ -432,6 +440,7 @@ function initialize() {
             }
          }
 
+         // add classes for meal types
          if (menu_items[i].meal_type === "BREAKFAST") {
                breakfast.appendChild(items);
                breakfast.classList.add('active'); 
@@ -459,7 +468,9 @@ function initialize() {
 
       }
 
-            if(!empty) main.appendChild(section);
+      // only append the section to the page if there are items in it
+      // (this fixes an earlier bug where headers displayed with no items underneath)
+      if(!empty) main.appendChild(section);
    }      
 
 }
