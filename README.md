@@ -18,3 +18,5 @@ Filtering by location does not work. (Takes a long time for the function to exec
 Some items don't have the correct allergens listed - this is an issue with the MSSQL data.
 
 Sometimes after filtering, meals can be shifted (i.e. dinner will show up in the breakfast column.)
+
+Our website doesn't display on iPhones (on any browser - no idea why this is happening.)
