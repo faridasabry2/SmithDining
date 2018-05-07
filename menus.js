@@ -19,6 +19,8 @@ coords["LAMONT"] = [42.320354, -72.636352];
 coords["MORROW\/WILSON"] =[42.320801, -72.644684];
 coords["TYLER"] = [42.316740, -72.639728];
 coords["ZISKIND\/CUTTER"] = [42.320700, -72.638250];
+coords["ZISKIND KOSHER"] = [42.320700, -72.638250];
+
 
 // filter options 
 let searchTerm="";
@@ -26,7 +28,7 @@ let searchTerm="";
 // object of areas of campus for filtering
 let areas={};
 
-areas["Center Campus"] = ["ZISKIND\/CUTTER","CHAPIN"];
+areas["Center Campus"] = ["ZISKIND\/CUTTER", "ZISKIND KOSHER", "CHAPIN"];
 areas["Green Street"] = ["HUBBARD", "TYLER"];
 areas["Upper Elm Street"] = ["GILLETT","LAMONT"];
 areas["Lower Elm Street"] = ["CHASE\/DUCKETT"];
@@ -194,7 +196,7 @@ function initialize() {
       distances = {};
 
       finalGroup.forEach(function(item) {
-         if(item.diningHall !== "-SPECIAL DAYS") {
+         if(item.diningHall !== "-SPECIAL DAYS" && coords[item.dining_hall] != undefined) {
             lat2 = coords[item.dining_hall][0];
             long2 = coords[item.dining_hall][1];
 
