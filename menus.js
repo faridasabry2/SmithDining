@@ -1,5 +1,24 @@
 // this will hold the json of menus
 let menus;
+let finalGroup;
+
+// holds current user's location
+let long = 0;
+let lat = 0;
+let showLocation = document.getElementById('showLocation');
+let coords = {};
+
+coords["CHAPIN"] = [42.318886, -72.639308];
+coords["CHASE\/DUCKETT"] = [42.319581, -72.636298];
+coords["COMSTOCK\/WILDER"] = [42.319999, -72.644916];
+coords["CUSHING\/EMERSON"] = [42.319990, -72.643611];
+coords["GILLETT"] = [42.319766, -72.636856];
+coords["HUBBARD"] = [42.317140, -72.637079];
+coords["KING\/SCALES"] = [42.321213, -72.642810];
+coords["LAMONT"] = [42.320354, -72.636352];
+coords["MORROW\/WILSON"] =[42.320801, -72.644684];
+coords["TYLER"] = [42.316740, -72.639728];
+coords["ZISKIND\/CUTTER"] = [42.320700, -72.638250];
 
 // filter options 
 let searchTerm="";
@@ -66,7 +85,6 @@ function initialize() {
 
    // --------------------------------------------------------------
    // DEFAULT DATE: display the menu items for that day
-   let finalGroup;
    finalGroup = filterByDate(new Date());
 
    updateDisplay(finalGroup);
@@ -106,34 +124,100 @@ function initialize() {
 
    /* getting user location  */
    function getLocation() {
-      if (navigator.geolocation) {
-         navigator.geolocation.getCurrentPosition(showPosition, showError);
+      loc = navigator.geolocation
+      if (loc) {
+         loc.getCurrentPosition(showPosition, showError, {
+            timeout: 5000,
+            maximumAge: 0,
+            enableHighAccuracy: true
+         });
       } else {
          console.log("Geolocation is not supported by this browser.");
       }
    }
 
    function showPosition(position) {
-      console.log("Latitude: " + position.coords.latitude + 
-        ", Longitude: " + position.coords.longitude);
+      lat = position.coords.latitude;
+      long = position.coords.longitude;
+      sortByLocation();
    }
 
    function showError(error) {
       switch(error.code) {
          case error.PERMISSION_DENIED:
-            console.log("User denied the request for Geolocation.");
+            showLocation.innerHTML = "User denied the request for Geolocation.";
             break;
          case error.POSITION_UNAVAILABLE:
-            console.log("Location information is unavailable.");
+            showLocation.innerHTML = "Location information is unavailable.";
             break;
          case error.TIMEOUT:
-            console.log("The request to get user location timed out.");
+            showLocation.innerHTML = "The request to get user location timed out.";
             break;
          case error.UNKNOWN_ERROR:
-            console.log("An unknown error occurred.");
+            showLocation.innerHTML = "An unknown error occurred.";
             break;
       }
    }
+
+   function toRadians(degrees)
+   {
+     var pi = Math.PI;
+     return degrees * (pi/180);
+   }
+
+   function sortByLocation() {
+      showLocation.innerHTML =  "Latitude: " + Math.round(lat * 100) / 100 + ", Longitude: " + Math.round(long * 100) / 100;
+
+      distances = {};
+
+      finalGroup.forEach(function(item) {
+         if(item.diningHall !== "-SPECIAL DAYS") {
+            lat2 = coords[item.dining_hall][0];
+            long2 = coords[item.dining_hall][1];
+
+            // console.log(lat2+ " " + long2);
+
+            var R = 6371e3; // metres
+            var latR = toRadians(lat);
+            var lat2R = toRadians(lat2);
+            var dLat = toRadians((lat2-lat));
+            var dLong = toRadians((long2-long));
+
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(latR) * Math.cos(lat2R) *
+                    Math.sin(dLong/2) * Math.sin(dLong/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            var d = R * c;
+
+            // console.log(item.dining_hall + " is: " + d + " meters away");
+
+            distances[item.dining_hall] = d;
+         }
+      });
+
+      finalGroup = mapOrder(finalGroup, distances, 'dining_hall');
+      updateDisplay(finalGroup);
+   }
+
+   /**
+    * Sort array of objects based on another array
+    */
+   function mapOrder (array, distances, key) {
+     
+      array.sort( function (a, b) {
+         let A = a[key]; 
+         let B = b[key];
+       
+         if (distances[A] > distances[B]) {
+            return 1;
+         } else {
+            return -1;
+         }
+       
+      });
+     return array;
+   };
 
    /* 
    function to filter menu items by date. 
@@ -179,7 +263,6 @@ function initialize() {
       //prevent page from reloading
       e.preventDefault();
 
-
       //grab search term
       searchTerm = document.getElementById('searchTerm').value.toLowerCase();
       updateDisplay(finalGroup);
@@ -194,17 +277,18 @@ function initialize() {
       let calendar = document.getElementById('calendar');
       let sidebarBtn = document.getElementById('sidebar');
       let location = document.getElementById('location');
+      let gps = document.getElementById('showLocation');
       let className = sidebarBtn.className;
 
       switch(className){
           case "col-md-3 hide":
-            console.log("hide");
+            // console.log("hide");
             sidebarBtn.classList.remove("hide");
             sidebarBtn.classList.add("show");
             main.style.margin = "0px 0px";
             calendar.style.margin = "0px 0px";
+            showLocation.style.margin = "10px 0px 0px 0%";
             location.style.margin = "10px 5px 0px 0%";
-
             break;
 
           default: 
@@ -212,6 +296,7 @@ function initialize() {
             sidebarBtn.classList.add("hide");
             main.style.margin = "0px 30%";
             calendar.style.margin = "0px 30%";
+            showLocation.style.margin = "10px 0px 0px 30%";
             location.style.margin = "10px 5px 0px 30%";
             break;
       }
@@ -356,7 +441,7 @@ function initialize() {
                breakfast.classList.add('active'); 
                if(items.childElementCount>1) {
                   p.innerHTML = "Breakfast";
-                  console.log("breakfast");
+                  // console.log("breakfast");
                   emtpy=false;
                }
 
@@ -365,7 +450,7 @@ function initialize() {
             lunch.classList.add('active');   
             if(items.childElementCount>1) {
                p.innerHTML = "Lunch";
-               console.log("lunch");
+               // console.log("lunch");
                empty=false;
             }  
 
@@ -374,16 +459,15 @@ function initialize() {
             dinner.classList.add('active'); 
             if(items.childElementCount>1) {
                p.innerHTML = "Dinner"; 
-               console.log("dinner");
+               // console.log("dinner");
                empty=false;
             }
          }
 
       }
 
-            if(!empty) main.appendChild(section);
+      if(!empty) main.appendChild(section);
    }
-
 }
 
 $(document).on("mouseenter", "li", function() {

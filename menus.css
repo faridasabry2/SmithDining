@@ -190,6 +190,10 @@ nav button:hover {
    margin: 0px 5%;
 }
 
+#showLocation {
+   margin: 10px 0px 0px 5%;
+}
+
 #location {
    margin: 10px 5px 0px 5%;
    background-color: #f7cf9e;
@@ -210,3 +214,4 @@ nav button:hover {
 .error {
    margin-top: 20px;
 }
+

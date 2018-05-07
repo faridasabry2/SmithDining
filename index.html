@@ -2,11 +2,21 @@
 <html>
 <head>
   <title> Smith College Dining Menu</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="logo.png"/>
+
+  <!-- Boostrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> 
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+  
+  <!-- CSS -->
   <link href="menus.css" rel="stylesheet">
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -84,14 +94,12 @@
       </form>
     </div> <!-- end of sidebar -->
 
-    <!-- Empty column for space -->
-    <!-- <div class="col-md-1"></div> -->
-
     <!-- Menu Content -->
     <div class="col-md-8">
       <!-- Calendar Date -->
       <p id="calendar">Date: <input type="text" id="datepicker"></p>
-      <button class="btn btn-warning" id="location" onclick="getLocation()">Sort By Your Location</button>
+      <button class="btn btn-warning" id="location">Sort By Your Location</button>
+      <p id="showLocation"></p>
 
       <div id="main"></div>
     </div>
