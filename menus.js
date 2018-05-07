@@ -23,16 +23,18 @@ coords["ZISKIND\/CUTTER"] = [42.320700, -72.638250];
 // filter options 
 let searchTerm="";
 
+// object of areas of campus for filtering
 let areas={};
 
 areas["Center Campus"] = ["ZISKIND\/CUTTER","CHAPIN"];
 areas["Green Street"] = ["HUBBARD", "TYLER"];
 areas["Upper Elm Street"] = ["GILLETT","LAMONT"];
-areas["Lower Elm Street"] = ["CHASE\/DUCKET"];
+areas["Lower Elm Street"] = ["CHASE\/DUCKETT"];
 areas["West Quad"] = ["COMSTOCK\/WILDER", "MORROW\/WILSON"];
 areas["East Quad"] = ["CUSHING\/EMERSON", "KING\/SCALES"];
 
-let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts"];
+// objects for filtering by allergens (checkboxes)
+let allergens = ["Wheat", "Eggs","Contains Nuts","Fish","Milk","Peanuts","Tree Nuts","Shellfish","Soy","Tree Nuts", "Corn", "Sesame"];
 let boxes = {};
 
 boxes["Wheat"] = document.querySelector("input[value=wheat]");
@@ -44,8 +46,10 @@ boxes["Peanuts"] = document.querySelector("input[value=peanuts]");
 boxes["Shellfish"] = document.querySelector("input[value=shellfish]");
 boxes["Soy"] = document.querySelector("input[value=soy]");
 boxes["Tree Nuts"] = document.querySelector("input[value=tree_nuts]");
+boxes["Corn"] = document.querySelector("input[value=corn]");
+boxes["Sesame"] = document.querySelector("input[value=sesame]");
 
-
+// object for displaying allergen icons on hover
 let allergen_icons = {};
 allergen_icons["Wheat"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Gluten.jpg";
 allergen_icons["Eggs"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Eggs.jpg";
@@ -56,8 +60,24 @@ allergen_icons["Peanuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/P
 allergen_icons["Tree Nuts"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Treenuts.jpg";
 allergen_icons["Shellfish"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Shellfish.jpg";
 allergen_icons["Soy"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Soy.jpg";
+allergen_icons["Corn"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Corn.jpg"
+allergen_icons["Sesame"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Sesame.jpg"
 allergen_icons["Vegetarian"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegetarian.jpg";
 allergen_icons["Vegan"] = "http://cbweb.smith.edu/NetNutrition/Images/traits/Vegan.jpg";
+
+// object of dining hall latitude/longitude for sorting by location
+let dining_coords = {};
+dining_coords["CHAPIN"] = [42.319082, -72.639259];
+dining_coords["ZISKIND\/CUTTER"] = [42.320616, -72.638274];
+dining_coords["HUBBARD"] = [42.317177, -72.636951];
+dining_coords["TYLER"] = [42.316652, -72.639660];
+dining_coords["GILLETT"] = [42.319801, -72.636877];
+dining_coords["LAMONT"] = [42.320444, -72.635781];
+dining_coords["CHASE\/DUCKETT"] = [42.319407, -72.636367];
+dining_coords["COMSTOCK\/WILDER"] = [42.320034, -72.644433];
+dining_coords["MORROW\/WILSON"] = [42.320919, -72.644303];
+dining_coords["CUSHING\/EMERSON"] = [42.320131, -72.643467];
+dining_coords["KING\/SCALES"] = [42.321152, -72.642898];
 
 
 let restriction = document.getElementById('diet');
@@ -96,8 +116,8 @@ function initialize() {
    let date = document.getElementById('datepicker');
    let sidebarBtn = document.getElementById('collapse');
 
+   // define buttons
    lastDate = date.value;
-
    filterBtn.onclick = filter;
    locationBtn.onclick = getLocation;
    sidebarBtn.onclick = collapse;
@@ -131,17 +151,20 @@ function initialize() {
             maximumAge: 0,
             enableHighAccuracy: true
          });
-      } else {
-         console.log("Geolocation is not supported by this browser.");
       }
    }
 
+   /* function to do something with user location 
+   ideally: go through every dining hall, calculate distance, 
+   sort final group by distance  */ 
    function showPosition(position) {
       lat = position.coords.latitude;
       long = position.coords.longitude;
       sortByLocation();
+      updateDisplay(finalGroup);
    }
 
+   // error function for geolocation (most likely user rejected permissions)
    function showError(error) {
       switch(error.code) {
          case error.PERMISSION_DENIED:
@@ -175,9 +198,9 @@ function initialize() {
             lat2 = coords[item.dining_hall][0];
             long2 = coords[item.dining_hall][1];
 
-            // console.log(lat2+ " " + long2);
-
-            var R = 6371e3; // metres
+            // calculates distance in meters between two geolocations
+            // algorithm taken from https://www.movable-type.co.uk/scripts/latlong.html
+            var R = 6371e3; // meters
             var latR = toRadians(lat);
             var lat2R = toRadians(lat2);
             var dLat = toRadians((lat2-lat));
@@ -259,6 +282,7 @@ function initialize() {
       return results;
    }
 
+   /* function is triggered when user hits the filter button */
    function filter(e){
       //prevent page from reloading
       e.preventDefault();
@@ -340,10 +364,27 @@ function initialize() {
          // fixes bug where cutter/z disappeared - it was last, so its group never hit the else to show meal
          if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
       }
+
+      // if no results are displayed - put up a no results message
+      // loop through all children of main: if all are empty, show empty message
+      // have to do this twice because dynamic filtering is happening in showMeal
+      let emptyResult = true;
+      for (let i=0; i<main.childNodes.length; i++) {
+         if (main.childNodes[i].hasChildNodes()) {
+            emptyResult = false;
+         }
+      }
+      if (emptyResult) {
+         let empty = document.createElement('h5');
+         empty.setAttribute('class', 'error');
+         empty.innerHTML = "No results to display.";
+         main.append(empty);
+      }
    }
 
    /* this function displays menu items for a given 
-   set of meals in a specific dining hall */
+   set of meals in a specific dining hall.
+   Also filters based on user specifications. */
    function showMeal(menu_items) {
 
       // heding + meal type + columns of meals
@@ -383,17 +424,17 @@ function initialize() {
          let p = document.createElement('h4');
          items.appendChild(p);
 
-         // iterate over menu items
+         // iterate over individual menu items
          for (let j=0; j<dishes.items.length; j++) {
             let show=true;
 
-            //dont any given item that the user has excluded with their filtering
+            //dont show any given item that the user has excluded with their filtering
             //search
             if(!dishes.items[j].item_name.toLowerCase().includes(searchTerm)){ 
                show=false;
             }
 
-            //allergens
+            //filter by allergens
             for(index in dishes.items[j].allergens){
                 let key=dishes.items[j].allergens[index];
                 if(allergens.includes(key) && boxes[key].checked){
@@ -401,12 +442,12 @@ function initialize() {
                 }
             }
 
-            //vegan
+            // filter by vegan
             if(restriction.value=="Vegan" && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
 
-            //vegetarian
+            //filter by vegetarian (also showing vegan items)
             if(restriction.value=="Vegetarian" && !dishes.items[j].allergens.includes("Vegetarian") && !dishes.items[j].allergens.includes("Vegan")){
                show=false;
             }
@@ -417,10 +458,12 @@ function initialize() {
                single_item.innerHTML = dishes.items[j].item_name;
                items.append(single_item);
 
+               // adding the allergens icons for a single item
                let allergens_list = document.createElement('ul');
                allergens_list.classList.add('hide_icons');
-               // allergens_list.addClass("happy");
 
+               // iterate through all allergens and add an image for it
+               // by default, do not display images (only show on hover)
                for (allergen in dishes.items[j].allergens) {
                   single_allergen = document.createElement('img');
                   single_allergen.src = allergen_icons[dishes.items[j].allergens[allergen]];
@@ -428,20 +471,17 @@ function initialize() {
                   single_allergen.classList.add("allergenIcon");
                   allergens_list.appendChild(single_allergen);
 
-                  if (dishes.items[j].allergens[allergen] === "Nuts") {
-                     console.log(dishes.items[j]);
-                  }
                }
                single_item.appendChild(allergens_list);
             }
          }
 
+         // add classes for meal types
          if (menu_items[i].meal_type === "BREAKFAST") {
                breakfast.appendChild(items);
                breakfast.classList.add('active'); 
                if(items.childElementCount>1) {
                   p.innerHTML = "Breakfast";
-                  // console.log("breakfast");
                   emtpy=false;
                }
 
@@ -450,7 +490,6 @@ function initialize() {
             lunch.classList.add('active');   
             if(items.childElementCount>1) {
                p.innerHTML = "Lunch";
-               // console.log("lunch");
                empty=false;
             }  
 
@@ -459,23 +498,28 @@ function initialize() {
             dinner.classList.add('active'); 
             if(items.childElementCount>1) {
                p.innerHTML = "Dinner"; 
-               // console.log("dinner");
                empty=false;
             }
          }
 
       }
 
+      // only append the section to the page if there are items in it
+      // (this fixes an earlier bug where headers displayed with no items underneath)
       if(!empty) main.appendChild(section);
-   }
+   }      
 }
 
+
+// on hover - remove hidden class for icons
 $(document).on("mouseenter", "li", function() {
     // hover starts code here
     this.childNodes[1].classList.remove('hide_icons');
 });
 
+// on mouseout - add hidden class for icons
 $(document).on("mouseout", "li", function() {
     // hover starts code here
     this.childNodes[1].classList.add('hide_icons');
 });
+

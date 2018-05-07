@@ -85,11 +85,6 @@ ul {
    background: #FFF3E4;
 }
 
-/*.diningHall li:nth-child(odd){
-   padding: 0px 5px;
-   background: #ddd;
-}*/
-
 .breakfast {
    display: inline-block;
    width: 30%;
@@ -127,11 +122,6 @@ ul {
    width: 100%;
    margin-bottom: 30px;
 }
-
-/*.bar {
-   margin: 10px;
-   size: 5px;
-}*/
 
 
 .fa-bars {
