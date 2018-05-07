@@ -24,4 +24,4 @@ Our website doesn't display on iPhones (on any browser - no idea why this is hap
 Some of the allergen icons don't show up, such as Sesame and Gluten-free (which are not available on [Net Nutrition](http://cbweb.smith.edu/NetNutrition/1))
 
 ### For More Info ###
-Our final wrote-up can be found [here](https://docs.google.com/document/d/14lF3AdbUd1L7TnIwdZQcCsjRQgcHyrWry8xkYB53y-0/edit?usp=sharing)
+Our final write-up can be found [here](https://docs.google.com/document/d/14lF3AdbUd1L7TnIwdZQcCsjRQgcHyrWry8xkYB53y-0/edit?usp=sharing)
