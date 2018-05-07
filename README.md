@@ -20,3 +20,6 @@ Some items don't have the correct allergens listed - this is an issue with the M
 Sometimes after filtering, meals can be shifted (i.e. dinner will show up in the breakfast column.)
 
 Our website doesn't display on iPhones (on any browser - no idea why this is happening.)
+
+### For More Info ###
+Our final wrote-up can be found [here](https://docs.google.com/document/d/14lF3AdbUd1L7TnIwdZQcCsjRQgcHyrWry8xkYB53y-0/edit?usp=sharing)
