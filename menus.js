@@ -146,6 +146,7 @@ function initialize() {
 
    /* getting user location  */
    function getLocation() {
+      showLocation.innerHTML = "Getting Your Location...";
       loc = navigator.geolocation
       if (loc) {
          loc.getCurrentPosition(showPosition, showError, {
