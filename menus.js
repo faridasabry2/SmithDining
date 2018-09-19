@@ -357,7 +357,9 @@ function initialize() {
                group.push(meals_list[i]);
             } else {
                //if its for a new dining hall, show the previous group if applicable and start a new group
-               if(campArea.value=="All" || areas[campArea.value].includes(current)) showMeal(group);
+               if(campArea.value=="All" || areas[campArea.value].includes(current)) {
+                  if(coords[current]!=undefined) showMeal(group);
+               }
                group = [];
                group.push(meals_list[i]);
             }
